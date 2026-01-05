@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Finanças - Desktop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            height: 100vh;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, #2c3e50, #1a2530);
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo-icon {
+            font-size: 36px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: #b0b7c3;
+            font-weight: 400;
+        }
+
+        .settings-icon {
+            background: none;
+            border: none;
+            color: #b0b7c3;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            position: absolute;
+            right: 15px;
+            top: 30px;
+        }
+
+        .settings-icon:hover {
+            color: #4CAF50;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .menu li {
+            margin-bottom: 8px;
+        }
+
+        .menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #b0b7c3;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu li.active a {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .menu li a i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .saldo-atual {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .saldo-atual h3 {
+            font-size: 14px;
+            color: #b0b7c3;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saldo-toggle {
+            background: none;
+            border: none;
+            color: #b0b7c3;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .saldo-toggle:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .saldo-atual .valor {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .saldo-atual .valor.oculto {
+            filter: blur(6px);
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        /* Cabeçalho Principal Atualizado */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #2c3e50, #1a2530);
+            border-radius: 12px;
+            padding: 20px 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header-icon {
+            font-size: 32px;
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .header-center {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 20px;
+        }
+
+        .header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-atual {
+            color: #b0b7c3;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Navegação por Mês */
+        .mes-navegacao {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-mes {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-mes:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .mes-info {
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .mes-ano {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .saldo-mes {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .saldo-mes .positivo {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .saldo-mes .negativo {
+            color: #F44336;
+            font-weight: 600;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card.active {
+            border: 2px solid #4CAF50;
+        }
+
+        .card i {
+            font-size: 24px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-receitas i {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #4CAF50;
+        }
+
+        .card-despesas i {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: #F44336;
+        }
+
+        .card-investimentos i {
+            background-color: rgba(33, 150, 243, 0.15);
+            color: #2196F3;
+        }
+
+        .card-saldo i {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .card .valor {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Gráficos e Transações */
+        .graficos-transacoes {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .grafico-container, .transacoes-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .grafico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .grafico-container h3, .transacoes-container h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .btn-fechar-grafico {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .btn-fechar-grafico:hover {
+            color: #F44336;
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        .transacao-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .transacao-item:last-child {
+            border-bottom: none;
+        }
+
+        .transacao-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .transacao-icone {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .transacao-alimentacao {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #4CAF50;
+        }
+
+        .transacao-transporte {
+            background-color: rgba(33, 150, 243, 0.15);
+            color: #2196F3;
+        }
+
+        .transacao-lazer {
+            background-color: rgba(156, 39, 176, 0.15);
+            color: #9C27B0;
+        }
+
+        .transacao-moradia {
+            background-color: rgba(255, 152, 0, 0.15);
+            color: #FF9800;
+        }
+
+        .transacao-descricao h4 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .transacao-descricao p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .transacao-valor {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .transacao-despesa {
+            color: #F44336;
+        }
+
+        .transacao-receita {
+            color: #4CAF50;
+        }
+
+        .parcela-info {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #7f8c8d;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        /* Botão Adicionar */
+        .btn-adicionar {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #4CAF50;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            z-index: 100;
+        }
+
+        .btn-adicionar:hover {
+            background-color: #3d8b40;
+            transform: scale(1.1);
+        }
+
+        /* Modal para adicionar transação */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 1;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #F44336;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            margin-right: 8px;
+        }
+
+        .radio-option.receita {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .radio-option.despesa {
+            color: #F44336;
+            font-weight: 600;
+        }
+
+        .parcelamento-group {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #F44336;
+        }
+
+        .parcelamento-group.active {
+            display: block;
+        }
+
+        .parcelamento-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .parcela-valor {
+            font-weight: 600;
+            color: #F44336;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+
+        .btn-salvar {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-salvar:hover {
+            background-color: #3d8b40;
+        }
+
+        /* Abas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Menu de opções do botão + */
+        .btn-options {
+            position: absolute;
+            bottom: 80px;
+            right: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            z-index: 99;
+            display: none;
+            flex-direction: column;
+            min-width: 180px;
+        }
+
+        .btn-options.active {
+            display: flex;
+        }
+
+        .btn-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+
+        .btn-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .btn-option i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn-option.receita i {
+            color: #4CAF50;
+        }
+
+        .btn-option.despesa i {
+            color: #F44336;
+        }
+
+        .btn-option.investimento i {
+            color: #FF9800;
+        }
+
+        .btn-option.criptomoeda i {
+            color: #9C27B0;
+        }
+
+        /* Card saldo com opção de ocultar */
+        .card-saldo-container {
+            position: relative;
+        }
+
+        .card-saldo-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            z-index: 1;
+        }
+
+        .card-saldo-toggle:hover {
+            color: #2c3e50;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .card .valor.oculto {
+            filter: blur(6px);
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
+        }
+
+        /* Formulário de saldo inicial */
+        .saldo-inicial-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .saldo-inicial-container h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .saldo-inicial-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .saldo-inicial-valor {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+
+        .btn-definir-saldo {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-definir-saldo:hover {
+            background-color: #1976D2;
+        }
+
+        /* Contas */
+        .contas-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .conta-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .conta-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+
+        .conta-banco {
+            background-color: #4CAF50;
+        }
+
+        .conta-carteira {
+            background-color: #2196F3;
+        }
+
+        .conta-investimento {
+            background-color: #FF9800;
+        }
+
+        .conta-cripto {
+            background-color: #9C27B0;
+        }
+
+        .conta-info h4 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .conta-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .conta-saldo {
+            margin-top: auto;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: right;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1200px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .graficos-transacoes {
+                grid-template-columns: 1fr;
+            }
+            
+            .contas-lista {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .menu {
+                display: flex;
+                overflow-x: auto;
+                margin-bottom: 15px;
+            }
+            
+            .menu li {
+                flex-shrink: 0;
+                margin-right: 10px;
+                margin-bottom: 0;
+            }
+            
+            .menu li a {
+                padding: 10px 15px;
+            }
+            
+            .saldo-atual {
+                margin-top: 10px;
+            }
+            
+            .mes-navegacao {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+            
+            .header h2 {
+                font-size: 26px;
+            }
+            
+            .logo h1 {
+                font-size: 20px;
+            }
+            
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+            
+            .btn-options {
+                right: 10px;
+                bottom: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h1>Minhas Finanças</h1>
+                    <div class="logo-subtitle">Controle Financeiro Pessoal</div>
+                </div>
+                <button class="settings-icon" id="settingsButton" title="Configurações">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+            
+            <ul class="menu">
+                <li class="active" data-tab="dashboard"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li data-tab="transacoes"><a href="#"><i class="fas fa-exchange-alt"></i> Transações</a></li>
+                <li data-tab="categorias"><a href="#"><i class="fas fa-chart-pie"></i> Categorias</a></li>
+                <li data-tab="metas"><a href="#"><i class="fas fa-bullseye"></i> Metas</a></li>
+                <li data-tab="contas"><a href="#"><i class="fas fa-file-invoice-dollar"></i> Contas</a></li>
+                <li data-tab="configuracoes"><a href="#"><i class="fas fa-sliders-h"></i> Configurações</a></li>
+            </ul>
+            
+            <div class="saldo-atual">
+                <h3>
+                    Saldo Atual
+                    <button class="saldo-toggle" id="saldoToggle" title="Mostrar/Ocultar saldo">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </h3>
+                <div class="valor" id="saldoValor">R$ 8.452,75</div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <div class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <!-- Cabeçalho Atualizado -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Dashboard Financeiro</h2>
+                        <div class="data-atual" id="dataAtual">Segunda-feira, 15 de maio de 2023</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <!-- Navegação por Mês -->
+                <div class="mes-navegacao">
+                    <button class="btn-mes" id="btnMesAnterior" title="Mês anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="mes-info">
+                        <div class="mes-ano" id="mesAtual">Maio 2023</div>
+                        <div class="saldo-mes">
+                            Saldo do mês: 
+                            <span id="saldoMes" class="positivo">R$ 8.452,75</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mes" id="btnMesProximo" title="Próximo mês">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="cards">
+                    <div class="card card-receitas active" data-tab="receitas">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>Receitas</h3>
+                        <div class="valor" id="receitasMes">R$ 12.540,00</div>
+                    </div>
+                    
+                    <div class="card card-despesas" data-tab="despesas">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Despesas</h3>
+                        <div class="valor" id="despesasMes">R$ 4.087,25</div>
+                    </div>
+                    
+                    <div class="card card-investimentos" data-tab="investimentos">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Investimentos</h3>
+                        <div class="valor">R$ 25.300,00</div>
+                    </div>
+                    
+                    <div class="card-saldo-container">
+                        <button class="card-saldo-toggle" id="cardSaldoToggle" title="Mostrar/Ocultar saldo">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="card card-saldo" data-tab="saldo">
+                            <i class="fas fa-wallet"></i>
+                            <h3>Saldo do Mês</h3>
+                            <div class="valor" id="cardSaldoValor">R$ 8.452,75</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="graficos-transacoes">
+                    <div class="grafico-container">
+                        <div class="grafico-header">
+                            <h3>Despesas por Categoria</h3>
+                            <button class="btn-fechar-grafico" id="btnFecharGraficoDespesas" title="Fechar gráfico">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="graficoDespesas"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="transacoes-container">
+                        <div class="grafico-header">
+                            <h3>Últimas Transações</h3>
+                        </div>
+                        <div class="transacoes-lista" id="listaTransacoes">
+                            <!-- Transações serão carregadas aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba Receitas -->
+            <div id="receitas" class="tab-content">
+                <!-- Cabeçalho da aba Receitas -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Receitas</h2>
+                        <div class="data-atual">Total: R$ 12.540,00</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <div class="mes-navegacao">
+                    <button class="btn-mes" id="btnMesAnteriorReceitas" title="Mês anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="mes-info">
+                        <div class="mes-ano">Maio 2023</div>
+                        <div class="saldo-mes">
+                            Receitas do mês: 
+                            <span class="positivo">R$ 12.540,00</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mes" id="btnMesProximoReceitas" title="Próximo mês">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="grafico-container">
+                    <div class="grafico-header">
+                        <h3>Receitas do Mês</h3>
+                        <button class="btn-fechar-grafico" id="btnFecharGraficoReceitas" title="Fechar gráfico">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="height: 400px;">
+                        <canvas id="graficoReceitas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba Despesas -->
+            <div id="despesas" class="tab-content">
+                <!-- Cabeçalho da aba Despesas -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Despesas</h2>
+                        <div class="data-atual">Total: R$ 4.087,25</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <div class="mes-navegacao">
+                    <button class="btn-mes" id="btnMesAnteriorDespesas" title="Mês anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="mes-info">
+                        <div class="mes-ano">Maio 2023</div>
+                        <div class="saldo-mes">
+                            Despesas do mês: 
+                            <span class="negativo">R$ 4.087,25</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mes" id="btnMesProximoDespesas" title="Próximo mês">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="grafico-container">
+                    <div class="grafico-header">
+                        <h3>Despesas do Mês</h3>
+                        <button class="btn-fechar-grafico" id="btnFecharGraficoDespesasDetalhado" title="Fechar gráfico">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="height: 400px;">
+                        <canvas id="graficoDespesasDetalhado"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aba Contas -->
+            <div id="contas" class="tab-content">
+                <!-- Cabeçalho da aba Contas -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Contas</h2>
+                        <div class="data-atual">Gerencie suas contas e saldo inicial</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <!-- Saldo Inicial -->
+                <div class="saldo-inicial-container">
+                    <h3>Saldo Inicial</h3>
+                    <div class="saldo-inicial-info">
+                        <div>
+                            <p style="color: #7f8c8d; margin-bottom: 5px;">Saldo inicial definido:</p>
+                            <div class="saldo-inicial-valor" id="saldoInicialValor">R$ 5.000,00</div>
+                        </div>
+                        <button class="btn-definir-saldo" id="btnDefinirSaldoInicial">
+                            <i class="fas fa-edit"></i> Alterar Saldo Inicial
+                        </button>
+                    </div>
+                    <p style="color: #7f8c8d; font-size: 14px;">O saldo inicial é o valor que você tinha antes de começar a usar o aplicativo. Ele serve como base para calcular seu saldo atual.</p>
+                </div>
+                
+                <!-- Lista de Contas -->
+                <div class="grafico-container">
+                    <h3>Minhas Contas</h3>
+                    <div class="contas-lista">
+                        <div class="conta-item">
+                            <div class="conta-header">
+                                <div class="conta-icon conta-banco">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="conta-info">
+                                    <h4>Banco Principal</h4>
+                                    <p>Conta Corrente • ***4567</p>
+                                </div>
+                            </div>
+                            <div class="conta-saldo">R$ 3.250,80</div>
+                        </div>
+                        
+                        <div class="conta-item">
+                            <div class="conta-header">
+                                <div class="conta-icon conta-carteira">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="conta-info">
+                                    <h4>Carteira</h4>
+                                    <p>Dinheiro em espécie</p>
+                                </div>
+                            </div>
+                            <div class="conta-saldo">R$ 520,00</div>
+                        </div>
+                        
+                        <div class="conta-item">
+                            <div class="conta-header">
+                                <div class="conta-icon conta-investimento">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="conta-info">
+                                    <h4>Investimentos</h4>
+                                    <p>Ações e Fundos</p>
+                                </div>
+                            </div>
+                            <div class="conta-saldo">R$ 25.300,00</div>
+                        </div>
+                        
+                        <div class="conta-item">
+                            <div class="conta-header">
+                                <div class="conta-icon conta-cripto">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="conta-info">
+                                    <h4>Criptomoedas</h4>
+                                    <p>Bitcoin e Ethereum</p>
+                                </div>
+                            </div>
+                            <div class="conta-saldo">R$ 8.400,00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Outras abas (simplificadas) -->
+            <div id="transacoes" class="tab-content">
+                <!-- Cabeçalho da aba Transações -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Todas as Transações</h2>
+                        <div class="data-atual">Filtrar por período</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <div class="grafico-container">
+                    <h3>Lista Completa de Transações</h3>
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">Aqui seria exibida a lista completa de todas as transações</p>
+                </div>
+            </div>
+            
+            <div id="categorias" class="tab-content">
+                <!-- Cabeçalho da aba Categorias -->
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    
+                    <div class="header-center">
+                        <h2>Categorias</h2>
+                        <div class="data-atual">Organize suas categorias</div>
+                    </div>
+                    
+                    <div class="header-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <div class="grafico-container">
+                    <h3>Gerenciamento de Categorias</h3>
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">Aqui você poderia gerenciar suas categorias de receitas e despesas</p>
+                </div>
+            </div>
+            
+            <!-- Botão Adicionar com opções -->
+            <button class="btn-adicionar" id="btnAdicionar">
+                <i class="fas fa-plus"></i>
+            </button>
+            
+            <div class="btn-options" id="btnOptions">
+                <button class="btn-option receita" id="btnAdicionarReceita">
+                    <i class="fas fa-money-bill-wave"></i> Adicionar Receita
+                </button>
+                <button class="btn-option despesa" id="btnAdicionarDespesa">
+                    <i class="fas fa-shopping-cart"></i> Adicionar Despesa
+                </button>
+                <button class="btn-option investimento" id="btnAdicionarInvestimento">
+                    <i class="fas fa-chart-line"></i> Adicionar Investimento
+                </button>
+                <button class="btn-option criptomoeda" id="btnAdicionarCriptomoeda">
+                    <i class="fas fa-coins"></i> Adicionar Criptomoeda
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para adicionar transação -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Adicionar Transação</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formTransacao">
+                    <div class="form-group" id="tipoTransacaoGroup">
+                        <label for="tipoTransacao">Tipo de Transação</label>
+                        <div class="radio-group">
+                            <label class="radio-option receita">
+                                <input type="radio" name="tipoTransacao" value="receita" id="tipoReceita" checked> Receita
+                            </label>
+                            <label class="radio-option despesa">
+                                <input type="radio" name="tipoTransacao" value="despesa" id="tipoDespesa"> Despesa
+                            </label>
+                            <label class="radio-option investimento">
+                                <input type="radio" name="tipoTransacao" value="investimento" id="tipoInvestimento"> Investimento
+                            </label>
+                            <label class="radio-option criptomoeda">
+                                <input type="radio" name="tipoTransacao" value="criptomoeda" id="tipoCriptomoeda"> Criptomoeda
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" class="form-control" placeholder="Ex: Salário, Aluguel, Supermercado..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="valor">Valor (R$)</label>
+                        <input type="number" id="valor" class="form-control" step="0.01" min="0" placeholder="0,00" required>
+                    </div>
+                    
+                    <!-- Opção de parcelamento (só para despesas) -->
+                    <div class="parcelamento-group" id="parcelamentoGroup">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="parcelamentoCheckbox">
+                            <label for="parcelamentoCheckbox">Esta despesa é parcelada</label>
+                        </div>
+                        
+                        <div id="parcelamentoCampos" style="display: none;">
+                            <div class="form-group">
+                                <label for="parcelas">Número de Parcelas</label>
+                                <input type="number" id="parcelas" class="form-control" min="2" max="24" value="2">
+                            </div>
+                            
+                            <div class="parcelamento-info">
+                                <span>Valor por parcela:</span>
+                                <span class="parcela-valor" id="valorParcela">R$ 0,00</span>
+                                <span id="parcelamentoTexto">(2x de R$ 0,00)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" class="form-control" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="salario">Salário</option>
+                            <option value="alimentacao">Alimentação</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="moradia">Moradia</option>
+                            <option value="lazer">Lazer</option>
+                            <option value="saude">Saúde</option>
+                            <option value="educacao">Educação</option>
+                            <option value="outros">Outros</option>
+                            <option value="acoes">Ações</option>
+                            <option value="fundos">Fundos Imobiliários</option>
+                            <option value="renda_fixa">Renda Fixa</option>
+                            <option value="bitcoin">Bitcoin</option>
+                            <option value="ethereum">Ethereum</option>
+                            <option value="altcoins">Altcoins</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-salvar">Salvar Transação</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para definir saldo inicial -->
+    <div class="modal-overlay" id="modalSaldoInicialOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Definir Saldo Inicial</h3>
+                <button class="modal-close" id="modalSaldoInicialClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formSaldoInicial">
+                    <div class="form-group">
+                        <label for="saldoInicial">Saldo Inicial (R$)</label>
+                        <input type="number" id="saldoInicial" class="form-control" step="0.01" placeholder="0,00" required>
+                        <small style="color: #7f8c8d; display: block; margin-top: 5px;">Informe o valor total que você tinha antes de começar a usar o aplicativo.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dataSaldoInicial">Data do Saldo Inicial</label>
+                        <input type="date" id="dataSaldoInicial" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-salvar">Salvar Saldo Inicial</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados iniciais
+        const transacoes = [
+            { id: 1, tipo: "despesa", descricao: "Supermercado", valor: 248.90, categoria: "alimentacao", data: "2023-05-15", parcelas: 1, parcelaAtual: 1 },
+            { id: 2, tipo: "despesa", descricao: "Combustível", valor: 180.00, categoria: "transporte", data: "2023-05-14", parcelas: 1, parcelaAtual: 1 },
+            { id: 3, tipo: "despesa", descricao: "Cinema", valor: 64.00, categoria: "lazer", data: "2023-05-13", parcelas: 1, parcelaAtual: 1 },
+            { id: 4, tipo: "despesa", descricao: "Aluguel", valor: 1500.00, categoria: "moradia", data: "2023-05-10", parcelas: 1, parcelaAtual: 1 },
+            { id: 5, tipo: "receita", descricao: "Salário", valor: 6500.00, categoria: "salario", data: "2023-05-05", parcelas: 1, parcelaAtual: 1 },
+            { id: 6, tipo: "receita", descricao: "Freelance", valor: 1200.00, categoria: "outros", data: "2023-05-08", parcelas: 1, parcelaAtual: 1 },
+            { id: 7, tipo: "despesa", descricao: "Academia", valor: 120.00, categoria: "saude", data: "2023-05-03", parcelas: 1, parcelaAtual: 1 },
+            { id: 8, tipo: "despesa", descricao: "Livros", valor: 85.50, categoria: "educacao", data: "2023-05-01", parcelas: 1, parcelaAtual: 1 },
+            { id: 9, tipo: "despesa", descricao: "Notebook Novo", valor: 2400.00, categoria: "outros", data: "2023-05-02", parcelas: 10, parcelaAtual: 1 },
+            { id: 10, tipo: "investimento", descricao: "Compra de Ações", valor: 2000.00, categoria: "acoes", data: "2023-05-06", parcelas: 1, parcelaAtual: 1 },
+            { id: 11, tipo: "criptomoeda", descricao: "Compra de Bitcoin", valor: 1500.00, categoria: "bitcoin", data: "2023-05-12", parcelas: 1, parcelaAtual: 1 }
+        ];
+
+        // Variáveis globais
+        let graficoDespesas, graficoReceitas, graficoDespesasDetalhado;
+        let tipoTransacaoModal = "receita"; // Padrão para o modal
+        let saldoOculto = false; // Estado do saldo (mostrado por padrão)
+        let mesAtual = new Date(); // Mês atual para navegação
+        let despesaParcelada = false; // Controle de despesa parcelada
+        let saldoInicial = 5000.00; // Saldo inicial do usuário
+
+        // Nomes dos meses em português
+        const meses = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar gráficos
+            inicializarGraficos();
+            
+            // Carregar transações iniciais
+            carregarTransacoes();
+            
+            // Configurar navegação por abas do menu lateral
+            configurarNavegacaoMenu();
+            
+            // Configurar navegação por cards do cabeçalho
+            configurarNavegacaoCards();
+            
+            // Configurar botão adicionar e modal
+            configurarModalTransacao();
+            
+            // Configurar botões para ocultar/mostrar saldo
+            configurarOcultarSaldo();
+            
+            // Configurar navegação por mês
+            configurarNavegacaoMes();
+            
+            // Atualizar data atual
+            atualizarDataAtual();
+            
+            // Atualizar valores do mês atual
+            atualizarResumoMes();
+            
+            // Configurar botão de configurações
+            configurarBotaoConfiguracoes();
+            
+            // Configurar botões X para fechar gráficos
+            configurarBotoesFecharGraficos();
+            
+            // Configurar botões de criptomoeda e investimento
+            configurarBotoesInvestimentoCripto();
+            
+            // Configurar saldo inicial
+            configurarSaldoInicial();
+        });
+
+        function inicializarGraficos() {
+            // Gráfico de despesas por categoria (Dashboard)
+            const ctxDespesas = document.getElementById('graficoDespesas').getContext('2d');
+            graficoDespesas = new Chart(ctxDespesas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Outros'],
+                    datasets: [{
+                        label: 'Valor em R$',
+                        data: [850, 420, 1500, 320, 120, 85.5, 2400],
+                        backgroundColor: [
+                            '#4CAF50',
+                            '#2196F3',
+                            '#FF9800',
+                            '#9C27B0',
+                            '#F44336',
+                            '#FFC107',
+                            '#607D8B'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: { size: 13 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: R$ ${context.parsed.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de receitas (Aba Receitas)
+            const ctxReceitas = document.getElementById('graficoReceitas').getContext('2d');
+            graficoReceitas = new Chart(ctxReceitas, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{
+                        label: 'Receitas (R$)',
+                        data: [10500, 11200, 9800, 11500, 12540, 0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#4CAF50',
+                        borderColor: '#388E3C',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `R$ ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de despesas detalhado (Aba Despesas)
+            const ctxDespesasDetalhado = document.getElementById('graficoDespesasDetalhado').getContext('2d');
+            graficoDespesasDetalhado = new Chart(ctxDespesasDetalhado, {
+                type: 'bar',
+                data: {
+                    labels: ['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Outros'],
+                    datasets: [{
+                        label: 'Despesas (R$)',
+                        data: [850, 420, 1500, 320, 120, 85.5, 2400],
+                        backgroundColor: [
+                            '#4CAF50',
+                            '#2196F3',
+                            '#FF9800',
+                            '#9C27B0',
+                            '#F44336',
+                            '#FFC107',
+                            '#607D8B'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `R$ ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function carregarTransacoes(filtroMes = null) {
+            const listaTransacoes = document.getElementById('listaTransacoes');
+            listaTransacoes.innerHTML = '';
+            
+            // Filtrar transações pelo mês selecionado
+            let transacoesFiltradas = [...transacoes];
+            
+            if (filtroMes) {
+                transacoesFiltradas = transacoesFiltradas.filter(transacao => {
+                    const dataTransacao = new Date(transacao.data);
+                    return dataTransacao.getMonth() === filtroMes.getMonth() && 
+                           dataTransacao.getFullYear() === filtroMes.getFullYear();
+                });
+            }
+            
+            // Ordenar transações por data (mais recente primeiro)
+            const transacoesOrdenadas = transacoesFiltradas.sort((a, b) => new Date(b.data) - new Date(a.data));
+            
+            // Limitar a 5 transações para exibição no dashboard
+            const transacoesExibicao = transacoesOrdenadas.slice(0, 5);
+            
+            if (transacoesExibicao.length === 0) {
+                listaTransacoes.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 20px;">Nenhuma transação neste mês</p>';
+                return;
+            }
+            
+            transacoesExibicao.forEach(transacao => {
+                const transacaoItem = document.createElement('div');
+                transacaoItem.className = 'transacao-item';
+                
+                // Determinar ícone e cor com base na categoria
+                let iconeClasse, icone, categoriaNome;
+                switch(transacao.categoria) {
+                    case 'alimentacao':
+                        iconeClasse = 'transacao-alimentacao';
+                        icone = 'fas fa-utensils';
+                        categoriaNome = 'Alimentação';
+                        break;
+                    case 'transporte':
+                        iconeClasse = 'transacao-transporte';
+                        icone = 'fas fa-gas-pump';
+                        categoriaNome = 'Transporte';
+                        break;
+                    case 'lazer':
+                        iconeClasse = 'transacao-lazer';
+                        icone = 'fas fa-film';
+                        categoriaNome = 'Lazer';
+                        break;
+                    case 'moradia':
+                        iconeClasse = 'transacao-moradia';
+                        icone = 'fas fa-home';
+                        categoriaNome = 'Moradia';
+                        break;
+                    case 'salario':
+                        iconeClasse = 'transacao-receita';
+                        icone = 'fas fa-money-check-alt';
+                        categoriaNome = 'Salário';
+                        break;
+                    case 'saude':
+                        iconeClasse = 'transacao-alimentacao';
+                        icone = 'fas fa-heartbeat';
+                        categoriaNome = 'Saúde';
+                        break;
+                    case 'educacao':
+                        iconeClasse = 'transacao-lazer';
+                        icone = 'fas fa-book';
+                        categoriaNome = 'Educação';
+                        break;
+                    case 'acoes':
+                    case 'fundos':
+                    case 'renda_fixa':
+                        iconeClasse = 'transacao-receita';
+                        icone = 'fas fa-chart-line';
+                        categoriaNome = 'Investimento';
+                        break;
+                    case 'bitcoin':
+                    case 'ethereum':
+                    case 'altcoins':
+                        iconeClasse = 'transacao-receita';
+                        icone = 'fas fa-coins';
+                        categoriaNome = 'Criptomoeda';
+                        break;
+                    default:
+                        iconeClasse = 'transacao-alimentacao';
+                        icone = 'fas fa-receipt';
+                        categoriaNome = 'Outros';
+                }
+                
+                // Formatar data
+                const dataObj = new Date(transacao.data);
+                const dataFormatada = dataObj.toLocaleDateString('pt-BR');
+                
+                // Verificar se é parcela
+                const parcelaInfo = transacao.parcelas > 1 ? 
+                    `<span class="parcela-info">${transacao.parcelaAtual}/${transacao.parcelas}</span>` : '';
+                
+                transacaoItem.innerHTML = `
+                    <div class="transacao-info">
+                        <div class="transacao-icone ${iconeClasse}">
+                            <i class="${icone}"></i>
+                        </div>
+                        <div class="transacao-descricao">
+                            <h4>${transacao.descricao} ${parcelaInfo}</h4>
+                            <p>${dataFormatada} • ${categoriaNome}</p>
+                        </div>
+                    </div>
+                    <div class="transacao-valor ${transacao.tipo === 'despesa' ? 'transacao-despesa' : 'transacao-receita'}">
+                        ${transacao.tipo === 'despesa' ? '-' : '+'} R$ ${transacao.valor.toFixed(2)}
+                    </div>
+                `;
+                
+                listaTransacoes.appendChild(transacaoItem);
+            });
+        }
+
+        function configurarNavegacaoMenu() {
+            const menuItems = document.querySelectorAll('.menu li');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Ativar item do menu
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Mostrar aba correspondente
+                    tabContents.forEach(tab => tab.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Desativar todos os cards quando mudar de aba via menu
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(card => card.classList.remove('active'));
+                    
+                    // Atualizar navegação por mês na aba ativa
+                    if (tabId === 'dashboard' || tabId === 'receitas' || tabId === 'despesas') {
+                        atualizarNavegacaoMes();
+                    }
+                });
+            });
+        }
+
+        function configurarNavegacaoCards() {
+            const cards = document.querySelectorAll('.card[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const menuItems = document.querySelectorAll('.menu li');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Ativar card clicado
+                    cards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Mostrar aba correspondente
+                    tabContents.forEach(tab => tab.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Ativar item do menu correspondente (se houver)
+                    menuItems.forEach(item => {
+                        if (item.getAttribute('data-tab') === tabId) {
+                            menuItems.forEach(i => i.classList.remove('active'));
+                            item.classList.add('active');
+                        }
+                    });
+                    
+                    // Atualizar navegação por mês na aba ativa
+                    if (tabId === 'dashboard' || tabId === 'receitas' || tabId === 'despesas') {
+                        atualizarNavegacaoMes();
+                    }
+                });
+            });
+        }
+
+        function configurarModalTransacao() {
+            const btnAdicionar = document.getElementById('btnAdicionar');
+            const btnOptions = document.getElementById('btnOptions');
+            const btnAdicionarReceita = document.getElementById('btnAdicionarReceita');
+            const btnAdicionarDespesa = document.getElementById('btnAdicionarDespesa');
+            const btnAdicionarInvestimento = document.getElementById('btnAdicionarInvestimento');
+            const btnAdicionarCriptomoeda = document.getElementById('btnAdicionarCriptomoeda');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            const formTransacao = document.getElementById('formTransacao');
+            const modalTitulo = document.getElementById('modalTitulo');
+            const tipoReceita = document.getElementById('tipoReceita');
+            const tipoDespesa = document.getElementById('tipoDespesa');
+            const tipoInvestimento = document.getElementById('tipoInvestimento');
+            const tipoCriptomoeda = document.getElementById('tipoCriptomoeda');
+            const parcelamentoGroup = document.getElementById('parcelamentoGroup');
+            const parcelamentoCheckbox = document.getElementById('parcelamentoCheckbox');
+            const parcelasInput = document.getElementById('parcelas');
+            const valorInput = document.getElementById('valor');
+            const valorParcela = document.getElementById('valorParcela');
+            const parcelamentoTexto = document.getElementById('parcelamentoTexto');
+            const parcelamentoCampos = document.getElementById('parcelamentoCampos');
+            const categoriaSelect = document.getElementById('categoria');
+            
+            // Alternar visibilidade do menu de opções
+            btnAdicionar.addEventListener('click', function(e) {
+                e.stopPropagation();
+                btnOptions.classList.toggle('active');
+            });
+            
+            // Fechar menu de opções ao clicar fora
+            document.addEventListener('click', function() {
+                btnOptions.classList.remove('active');
+            });
+            
+            // Prevenir que clique no menu feche o próprio menu
+            btnOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Abrir modal para adicionar receita
+            btnAdicionarReceita.addEventListener('click', function() {
+                btnOptions.classList.remove('active');
+                tipoReceita.checked = true;
+                tipoTransacaoModal = 'receita';
+                modalTitulo.textContent = 'Adicionar Receita';
+                parcelamentoGroup.classList.remove('active');
+                modalOverlay.classList.add('active');
+                atualizarCategoriasPorTipo('receita');
+            });
+            
+            // Abrir modal para adicionar despesa
+            btnAdicionarDespesa.addEventListener('click', function() {
+                btnOptions.classList.remove('active');
+                tipoDespesa.checked = true;
+                tipoTransacaoModal = 'despesa';
+                modalTitulo.textContent = 'Adicionar Despesa';
+                parcelamentoGroup.classList.add('active');
+                modalOverlay.classList.add('active');
+                atualizarCategoriasPorTipo('despesa');
+            });
+            
+            // Abrir modal para adicionar investimento
+            btnAdicionarInvestimento.addEventListener('click', function() {
+                btnOptions.classList.remove('active');
+                tipoInvestimento.checked = true;
+                tipoTransacaoModal = 'investimento';
+                modalTitulo.textContent = 'Adicionar Investimento';
+                parcelamentoGroup.classList.remove('active');
+                modalOverlay.classList.add('active');
+                atualizarCategoriasPorTipo('investimento');
+            });
+            
+            // Abrir modal para adicionar criptomoeda
+            btnAdicionarCriptomoeda.addEventListener('click', function() {
+                btnOptions.classList.remove('active');
+                tipoCriptomoeda.checked = true;
+                tipoTransacaoModal = 'criptomoeda';
+                modalTitulo.textContent = 'Adicionar Criptomoeda';
+                parcelamentoGroup.classList.remove('active');
+                modalOverlay.classList.add('active');
+                atualizarCategoriasPorTipo('criptomoeda');
+            });
+            
+            // Alternar tipo de transação no modal
+            tipoReceita.addEventListener('change', function() {
+                if (this.checked) {
+                    tipoTransacaoModal = 'receita';
+                    modalTitulo.textContent = 'Adicionar Receita';
+                    parcelamentoGroup.classList.remove('active');
+                    atualizarCategoriasPorTipo('receita');
+                }
+            });
+            
+            tipoDespesa.addEventListener('change', function() {
+                if (this.checked) {
+                    tipoTransacaoModal = 'despesa';
+                    modalTitulo.textContent = 'Adicionar Despesa';
+                    parcelamentoGroup.classList.add('active');
+                    atualizarCategoriasPorTipo('despesa');
+                }
+            });
+            
+            tipoInvestimento.addEventListener('change', function() {
+                if (this.checked) {
+                    tipoTransacaoModal = 'investimento';
+                    modalTitulo.textContent = 'Adicionar Investimento';
+                    parcelamentoGroup.classList.remove('active');
+                    atualizarCategoriasPorTipo('investimento');
+                }
+            });
+            
+            tipoCriptomoeda.addEventListener('change', function() {
+                if (this.checked) {
+                    tipoTransacaoModal = 'criptomoeda';
+                    modalTitulo.textContent = 'Adicionar Criptomoeda';
+                    parcelamentoGroup.classList.remove('active');
+                    atualizarCategoriasPorTipo('criptomoeda');
+                }
+            });
+            
+            // Função para atualizar categorias baseadas no tipo de transação
+            function atualizarCategoriasPorTipo(tipo) {
+                // Salvar a seleção atual
+                const selecaoAtual = categoriaSelect.value;
+                
+                // Limpar opções atuais
+                categoriaSelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+                
+                // Adicionar opções baseadas no tipo
+                let opcoes = [];
+                
+                switch(tipo) {
+                    case 'receita':
+                        opcoes = [
+                            { value: 'salario', text: 'Salário' },
+                            { value: 'freelance', text: 'Freelance' },
+                            { value: 'investimentos', text: 'Rendimentos de Investimentos' },
+                            { value: 'outros', text: 'Outros' }
+                        ];
+                        break;
+                    case 'despesa':
+                        opcoes = [
+                            { value: 'alimentacao', text: 'Alimentação' },
+                            { value: 'transporte', text: 'Transporte' },
+                            { value: 'moradia', text: 'Moradia' },
+                            { value: 'lazer', text: 'Lazer' },
+                            { value: 'saude', text: 'Saúde' },
+                            { value: 'educacao', text: 'Educação' },
+                            { value: 'outros', text: 'Outros' }
+                        ];
+                        break;
+                    case 'investimento':
+                        opcoes = [
+                            { value: 'acoes', text: 'Ações' },
+                            { value: 'fundos', text: 'Fundos Imobiliários' },
+                            { value: 'renda_fixa', text: 'Renda Fixa' },
+                            { value: 'outros', text: 'Outros Investimentos' }
+                        ];
+                        break;
+                    case 'criptomoeda':
+                        opcoes = [
+                            { value: 'bitcoin', text: 'Bitcoin' },
+                            { value: 'ethereum', text: 'Ethereum' },
+                            { value: 'altcoins', text: 'Altcoins' },
+                            { value: 'outros', text: 'Outras Criptomoedas' }
+                        ];
+                        break;
+                }
+                
+                // Adicionar as opções ao select
+                opcoes.forEach(opcao => {
+                    const option = document.createElement('option');
+                    option.value = opcao.value;
+                    option.textContent = opcao.text;
+                    categoriaSelect.appendChild(option);
+                });
+                
+                // Restaurar seleção anterior se ainda for válida
+                if (selecaoAtual && opcoes.some(opcao => opcao.value === selecaoAtual)) {
+                    categoriaSelect.value = selecaoAtual;
+                }
+            }
+            
+            // Alternar parcelamento
+            parcelamentoCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    parcelamentoCampos.style.display = 'block';
+                    despesaParcelada = true;
+                    calcularParcela();
+                } else {
+                    parcelamentoCampos.style.display = 'none';
+                    despesaParcelada = false;
+                }
+            });
+            
+            // Calcular valor da parcela quando o valor ou número de parcelas mudar
+            valorInput.addEventListener('input', calcularParcela);
+            parcelasInput.addEventListener('input', calcularParcela);
+            
+            function calcularParcela() {
+                if (!despesaParcelada) return;
+                
+                const valorTotal = parseFloat(valorInput.value) || 0;
+                const numParcelas = parseInt(parcelasInput.value) || 2;
+                const valorParcelaCalculado = valorTotal / numParcelas;
+                
+                valorParcela.textContent = `R$ ${valorParcelaCalculado.toFixed(2)}`;
+                parcelamentoTexto.textContent = `(${numParcelas}x de R$ ${valorParcelaCalculado.toFixed(2)})`;
+            }
+            
+            // Fechar modal
+            modalClose.addEventListener('click', function() {
+                modalOverlay.classList.remove('active');
+                formTransacao.reset();
+                parcelamentoGroup.classList.remove('active');
+                parcelamentoCampos.style.display = 'none';
+                despesaParcelada = false;
+            });
+            
+            // Fechar modal ao clicar fora
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove('active');
+                    formTransacao.reset();
+                    parcelamentoGroup.classList.remove('active');
+                    parcelamentoCampos.style.display = 'none';
+                    despesaParcelada = false;
+                }
+            });
+            
+            // Submeter formulário
+            formTransacao.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Capturar valores do formulário
+                const descricao = document.getElementById('descricao').value;
+                const valor = parseFloat(document.getElementById('valor').value);
+                const categoria = document.getElementById('categoria').value;
+                const data = document.getElementById('data').value;
+                const tipo = document.querySelector('input[name="tipoTransacao"]:checked').value;
+                
+                // Validar dados
+                if (!descricao || !valor || !categoria || !data) {
+                    alert('Por favor, preencha todos os campos.');
+                    return;
+                }
+                
+                // Verificar se é despesa parcelada
+                let parcelas = 1;
+                let parcelaAtual = 1;
+                
+                if (tipo === 'despesa' && despesaParcelada) {
+                    parcelas = parseInt(parcelasInput.value) || 2;
+                }
+                
+                // Adicionar nova transação
+                const novaTransacao = {
+                    id: transacoes.length + 1,
+                    tipo: tipo,
+                    descricao: descricao,
+                    valor: valor,
+                    categoria: categoria,
+                    data: data,
+                    parcelas: parcelas,
+                    parcelaAtual: 1
+                };
+                
+                transacoes.push(novaTransacao);
+                
+                // Se for despesa parcelada, criar as transações futuras
+                if (tipo === 'despesa' && parcelas > 1) {
+                    const dataObj = new Date(data);
+                    
+                    for (let i = 2; i <= parcelas; i++) {
+                        // Adicionar um mês para cada parcela
+                        const dataParcela = new Date(dataObj);
+                        dataParcela.setMonth(dataParcela.getMonth() + (i - 1));
+                        
+                        const transacaoParcela = {
+                            id: transacoes.length + i,
+                            tipo: tipo,
+                            descricao: `${descricao} (Parcela ${i}/${parcelas})`,
+                            valor: valor / parcelas,
+                            categoria: categoria,
+                            data: dataParcela.toISOString().split('T')[0],
+                            parcelas: parcelas,
+                            parcelaAtual: i
+                        };
+                        
+                        transacoes.push(transacaoParcela);
+                    }
+                }
+                
+                // Atualizar interface
+                carregarTransacoes(mesAtual);
+                atualizarGraficos();
+                atualizarCards();
+                atualizarResumoMes();
+                
+                // Fechar modal e resetar formulário
+                modalOverlay.classList.remove('active');
+                formTransacao.reset();
+                parcelamentoGroup.classList.remove('active');
+                parcelamentoCampos.style.display = 'none';
+                despesaParcelada = false;
+                
+                // Mostrar mensagem de sucesso
+                let mensagem = `Transação "${descricao}" adicionada com sucesso!`;
+                if (parcelas > 1) {
+                    mensagem += `\nForam criadas ${parcelas} parcelas.`;
+                }
+                alert(mensagem);
+                
+                // Navegar para a aba correspondente
+                if (tipo === 'receita') {
+                    document.querySelector('.card-receitas').click();
+                } else if (tipo === 'despesa') {
+                    document.querySelector('.card-despesas').click();
+                } else if (tipo === 'investimento' || tipo === 'criptomoeda') {
+                    document.querySelector('.card-investimentos').click();
+                }
+            });
+            
+            // Definir data padrão como hoje
+            document.getElementById('data').valueAsDate = new Date();
+        }
+
+        function configurarOcultarSaldo() {
+            const saldoToggle = document.getElementById('saldoToggle');
+            const cardSaldoToggle = document.getElementById('cardSaldoToggle');
+            const saldoValor = document.getElementById('saldoValor');
+            const cardSaldoValor = document.getElementById('cardSaldoValor');
+            
+            // Função para alternar visibilidade do saldo
+            function alternarVisibilidadeSaldo() {
+                saldoOculto = !saldoOculto;
+                
+                if (saldoOculto) {
+                    // Ocultar saldo
+                    saldoValor.classList.add('oculto');
+                    cardSaldoValor.classList.add('oculto');
+                    saldoValor.textContent = 'R$ ******';
+                    cardSaldoValor.textContent = 'R$ ******';
+                    
+                    // Alterar ícone para olho fechado
+                    saldoToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    cardSaldoToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    // Mostrar saldo
+                    saldoValor.classList.remove('oculto');
+                    cardSaldoValor.classList.remove('oculto');
+                    
+                    // Calcular e mostrar valor real
+                    atualizarValoresSaldo();
+                    
+                    // Alterar ícone para olho aberto
+                    saldoToggle.innerHTML = '<i class="fas fa-eye"></i>';
+                    cardSaldoToggle.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+                
+                // Salvar preferência no localStorage
+                localStorage.setItem('saldoOculto', saldoOculto);
+            }
+            
+            // Verificar preferência salva
+            const saldoOcultoSalvo = localStorage.getItem('saldoOculto');
+            if (saldoOcultoSalvo === 'true') {
+                saldoOculto = true;
+                alternarVisibilidadeSaldo(); // Aplicar estado salvo
+            }
+            
+            // Configurar eventos dos botões
+            saldoToggle.addEventListener('click', alternarVisibilidadeSaldo);
+            cardSaldoToggle.addEventListener('click', alternarVisibilidadeSaldo);
+            
+            // Permitir que o clique no saldo oculto não faça nada
+            saldoValor.addEventListener('click', function(e) {
+                if (saldoOculto) {
+                    e.stopPropagation();
+                }
+            });
+            
+            cardSaldoValor.addEventListener('click', function(e) {
+                if (saldoOculto) {
+                    e.stopPropagation();
+                }
+            });
+        }
+
+        function configurarBotoesFecharGraficos() {
+            const btnFecharGraficoDespesas = document.getElementById('btnFecharGraficoDespesas');
+            const btnFecharGraficoReceitas = document.getElementById('btnFecharGraficoReceitas');
+            const btnFecharGraficoDespesasDetalhado = document.getElementById('btnFecharGraficoDespesasDetalhado');
+            
+            // Fechar gráfico de despesas no dashboard
+            btnFecharGraficoDespesas.addEventListener('click', function() {
+                const graficoContainer = this.closest('.grafico-container');
+                graficoContainer.style.display = 'none';
+                alert('Gráfico de despesas fechado. Recarregue a página para visualizá-lo novamente.');
+            });
+            
+            // Fechar gráfico de receitas
+            if (btnFecharGraficoReceitas) {
+                btnFecharGraficoReceitas.addEventListener('click', function() {
+                    const graficoContainer = this.closest('.grafico-container');
+                    graficoContainer.style.display = 'none';
+                    alert('Gráfico de receitas fechado. Recarregue a página para visualizá-lo novamente.');
+                });
+            }
+            
+            // Fechar gráfico de despesas detalhado
+            if (btnFecharGraficoDespesasDetalhado) {
+                btnFecharGraficoDespesasDetalhado.addEventListener('click', function() {
+                    const graficoContainer = this.closest('.grafico-container');
+                    graficoContainer.style.display = 'none';
+                    alert('Gráfico de despesas detalhado fechado. Recarregue a página para visualizá-lo novamente.');
+                });
+            }
+        }
+
+        function configurarBotoesInvestimentoCripto() {
+            // Esta função já está integrada em configurarModalTransacao
+            // Os botões de investimento e criptomoeda já estão configurados
+        }
+
+        function configurarSaldoInicial() {
+            const btnDefinirSaldoInicial = document.getElementById('btnDefinirSaldoInicial');
+            const modalSaldoInicialOverlay = document.getElementById('modalSaldoInicialOverlay');
+            const modalSaldoInicialClose = document.getElementById('modalSaldoInicialClose');
+            const formSaldoInicial = document.getElementById('formSaldoInicial');
+            const saldoInicialValor = document.getElementById('saldoInicialValor');
+            
+            // Atualizar exibição do saldo inicial
+            saldoInicialValor.textContent = `R$ ${saldoInicial.toFixed(2)}`;
+            
+            // Abrir modal para definir saldo inicial
+            btnDefinirSaldoInicial.addEventListener('click', function() {
+                document.getElementById('saldoInicial').value = saldoInicial;
+                document.getElementById('dataSaldoInicial').valueAsDate = new Date('2023-01-01');
+                modalSaldoInicialOverlay.classList.add('active');
+            });
+            
+            // Fechar modal
+            modalSaldoInicialClose.addEventListener('click', function() {
+                modalSaldoInicialOverlay.classList.remove('active');
+            });
+            
+            // Fechar modal ao clicar fora
+            modalSaldoInicialOverlay.addEventListener('click', function(e) {
+                if (e.target === modalSaldoInicialOverlay) {
+                    modalSaldoInicialOverlay.classList.remove('active');
+                }
+            });
+            
+            // Submeter formulário de saldo inicial
+            formSaldoInicial.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const novoSaldo = parseFloat(document.getElementById('saldoInicial').value);
+                const dataSaldo = document.getElementById('dataSaldoInicial').value;
+                
+                if (!novoSaldo || !dataSaldo) {
+                    alert('Por favor, preencha todos os campos.');
+                    return;
+                }
+                
+                saldoInicial = novoSaldo;
+                saldoInicialValor.textContent = `R$ ${saldoInicial.toFixed(2)}`;
+                
+                // Atualizar saldo atual (considerando o saldo inicial)
+                atualizarValoresSaldo();
+                
+                modalSaldoInicialOverlay.classList.remove('active');
+                alert(`Saldo inicial definido como R$ ${saldoInicial.toFixed(2)} com sucesso!`);
+            });
+        }
+
+        function configurarNavegacaoMes() {
+            const btnMesAnterior = document.getElementById('btnMesAnterior');
+            const btnMesProximo = document.getElementById('btnMesProximo');
+            const btnMesAnteriorReceitas = document.getElementById('btnMesAnteriorReceitas');
+            const btnMesProximoReceitas = document.getElementById('btnMesProximoReceitas');
+            const btnMesAnteriorDespesas = document.getElementById('btnMesAnteriorDespesas');
+            const btnMesProximoDespesas = document.getElementById('btnMesProximoDespesas');
+            
+            // Função para navegar para o mês anterior
+            function mesAnterior() {
+                mesAtual.setMonth(mesAtual.getMonth() - 1);
+                atualizarNavegacaoMes();
+                carregarTransacoes(mesAtual);
+                atualizarResumoMes();
+            }
+            
+            // Função para navegar para o próximo mês
+            function mesProximo() {
+                mesAtual.setMonth(mesAtual.getMonth() + 1);
+                atualizarNavegacaoMes();
+                carregarTransacoes(mesAtual);
+                atualizarResumoMes();
+            }
+            
+            // Configurar eventos dos botões
+            btnMesAnterior.addEventListener('click', mesAnterior);
+            btnMesProximo.addEventListener('click', mesProximo);
+            
+            if (btnMesAnteriorReceitas) {
+                btnMesAnteriorReceitas.addEventListener('click', mesAnterior);
+                btnMesProximoReceitas.addEventListener('click', mesProximo);
+            }
+            
+            if (btnMesAnteriorDespesas) {
+                btnMesAnteriorDespesas.addEventListener('click', mesAnterior);
+                btnMesProximoDespesas.addEventListener('click', mesProximo);
+            }
+        }
+
+        function configurarBotaoConfiguracoes() {
+            const settingsButton = document.getElementById('settingsButton');
+            
+            settingsButton.addEventListener('click', function() {
+                // Navegar para a aba de configurações
+                document.querySelector('.menu li[data-tab="configuracoes"]').click();
+                alert('Abrindo configurações do aplicativo...');
+            });
+        }
+
+        function atualizarNavegacaoMes() {
+            const mesTexto = document.getElementById('mesAtual');
+            const mes = meses[mesAtual.getMonth()];
+            const ano = mesAtual.getFullYear();
+            
+            mesTexto.textContent = `${mes} ${ano}`;
+            
+            // Atualizar também nas outras abas se existirem
+            const outrosMeses = document.querySelectorAll('.mes-ano');
+            outrosMeses.forEach(element => {
+                if (element.id !== 'mesAtual') {
+                    element.textContent = `${mes} ${ano}`;
+                }
+            });
+        }
+
+        function atualizarDataAtual() {
+            const dataAtualElement = document.getElementById('dataAtual');
+            const agora = new Date();
+            
+            const opcoes = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            dataAtualElement.textContent = agora.toLocaleDateString('pt-BR', opcoes);
+        }
+
+        function atualizarResumoMes() {
+            // Calcular receitas e despesas do mês atual
+            let receitasMes = 0;
+            let despesasMes = 0;
+            let investimentosMes = 0;
+            let criptomoedasMes = 0;
+            
+            transacoes.forEach(transacao => {
+                const dataTransacao = new Date(transacao.data);
+                
+                if (dataTransacao.getMonth() === mesAtual.getMonth() && 
+                    dataTransacao.getFullYear() === mesAtual.getFullYear()) {
+                    
+                    if (transacao.tipo === 'receita') {
+                        receitasMes += transacao.valor;
+                    } else if (transacao.tipo === 'despesa') {
+                        despesasMes += transacao.valor;
+                    } else if (transacao.tipo === 'investimento') {
+                        investimentosMes += transacao.valor;
+                    } else if (transacao.tipo === 'criptomoeda') {
+                        criptomoedasMes += transacao.valor;
+                    }
+                }
+            });
+            
+            const saldoMes = receitasMes - despesasMes;
+            
+            // Atualizar cards
+            document.getElementById('receitasMes').textContent = `R$ ${receitasMes.toFixed(2)}`;
+            document.getElementById('despesasMes').textContent = `R$ ${despesasMes.toFixed(2)}`;
+            
+            // Atualizar saldo do mês
+            const saldoMesElement = document.getElementById('saldoMes');
+            saldoMesElement.textContent = `R$ ${saldoMes.toFixed(2)}`;
+            
+            if (saldoMes >= 0) {
+                saldoMesElement.className = 'positivo';
+            } else {
+                saldoMesElement.className = 'negativo';
+            }
+            
+            // Atualizar também o saldo do card se não estiver oculto
+            if (!saldoOculto) {
+                document.getElementById('cardSaldoValor').textContent = `R$ ${saldoMes.toFixed(2)}`;
+            }
+        }
+
+        function atualizarGraficos() {
+            // Atualizar gráfico de despesas
+            const despesasPorCategoria = {
+                alimentacao: 0,
+                transporte: 0,
+                moradia: 0,
+                lazer: 0,
+                saude: 0,
+                educacao: 0,
+                outros: 0
+            };
+            
+            // Calcular totais por categoria
+            transacoes.forEach(transacao => {
+                if (transacao.tipo === 'despesa' && despesasPorCategoria.hasOwnProperty(transacao.categoria)) {
+                    despesasPorCategoria[transacao.categoria] += transacao.valor;
+                }
+            });
+            
+            // Atualizar dados do gráfico
+            graficoDespesas.data.datasets[0].data = [
+                despesasPorCategoria.alimentacao,
+                despesasPorCategoria.transporte,
+                despesasPorCategoria.moradia,
+                despesasPorCategoria.lazer,
+                despesasPorCategoria.saude,
+                despesasPorCategoria.educacao,
+                despesasPorCategoria.outros
+            ];
+            
+            graficoDespesas.update();
+            
+            // Atualizar gráfico de despesas detalhado
+            graficoDespesasDetalhado.data.datasets[0].data = [
+                despesasPorCategoria.alimentacao,
+                despesasPorCategoria.transporte,
+                despesasPorCategoria.moradia,
+                despesasPorCategoria.lazer,
+                despesasPorCategoria.saude,
+                despesasPorCategoria.educacao,
+                despesasPorCategoria.outros
+            ];
+            
+            graficoDespesasDetalhado.update();
+        }
+
+        function atualizarCards() {
+            // Calcular totais
+            let totalReceitas = 0;
+            let totalDespesas = 0;
+            let totalInvestimentos = 0;
+            let totalCriptomoedas = 0;
+            
+            transacoes.forEach(transacao => {
+                if (transacao.tipo === 'receita') {
+                    totalReceitas += transacao.valor;
+                } else if (transacao.tipo === 'despesa') {
+                    totalDespesas += transacao.valor;
+                } else if (transacao.tipo === 'investimento') {
+                    totalInvestimentos += transacao.valor;
+                } else if (transacao.tipo === 'criptomoeda') {
+                    totalCriptomoedas += transacao.valor;
+                }
+            });
+            
+            const saldoTotal = saldoInicial + totalReceitas - totalDespesas;
+            const totalInvestimentosComCripto = totalInvestimentos + totalCriptomoedas;
+            
+            // Atualizar valores nos cards (se estiverem visíveis)
+            document.querySelector('.card-receitas .valor').textContent = `R$ ${totalReceitas.toFixed(2)}`;
+            document.querySelector('.card-despesas .valor').textContent = `R$ ${totalDespesas.toFixed(2)}`;
+            document.querySelector('.card-investimentos .valor').textContent = `R$ ${totalInvestimentosComCripto.toFixed(2)}`;
+            
+            // Atualizar valores de saldo (considerando se estão ocultos ou não)
+            atualizarValoresSaldo();
+        }
+
+        function atualizarValoresSaldo() {
+            // Calcular totais
+            let totalReceitas = 0;
+            let totalDespesas = 0;
+            
+            transacoes.forEach(transacao => {
+                if (transacao.tipo === 'receita') {
+                    totalReceitas += transacao.valor;
+                } else if (transacao.tipo === 'despesa') {
+                    totalDespesas += transacao.valor;
+                }
+            });
+            
+            const saldoTotal = saldoInicial + totalReceitas - totalDespesas;
+            
+            // Atualizar valores de saldo
+            const saldoValor = document.getElementById('saldoValor');
+            const cardSaldoValor = document.getElementById('cardSaldoValor');
+            
+            if (!saldoOculto) {
+                // Se o saldo não está oculto, mostrar valores reais
+                saldoValor.textContent = `R$ ${saldoTotal.toFixed(2)}`;
+                cardSaldoValor.textContent = `R$ ${saldoTotal.toFixed(2)}`;
+                
+                // Atualizar saldo na sidebar
+                document.querySelector('.saldo-atual .valor').textContent = `R$ ${saldoTotal.toFixed(2)}`;
+            } else {
+                // Se o saldo está oculto, manter os asteriscos
+                saldoValor.textContent = 'R$ ******';
+                cardSaldoValor.textContent = 'R$ ******';
+            }
+        }
+    </script>
+</body>
+  </html>
