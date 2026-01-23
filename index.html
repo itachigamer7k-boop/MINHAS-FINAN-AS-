@@ -33,7 +33,7 @@
             color: var(--text);
             min-height: 100vh;
             padding-bottom: 80px;
-            padding-top: 110px; /* Compensa a altura do header fixo */
+            padding-top: 110px;
         }
 
         .container {
@@ -584,6 +584,74 @@
             line-height: 1.5;
         }
 
+        /* Estilos para parcelamento */
+        .installment-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .checkbox-option:hover {
+            background-color: #f1f5f9;
+        }
+
+        .checkbox-option input {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .checkbox-option input:checked + .checkbox-custom {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkbox-option input:checked + .checkbox-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 2px;
+        }
+
+        .installment-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .installment-info p {
+            margin-bottom: 5px;
+        }
+
+        .installment-value {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
         @media (max-width: 768px) {
             body {
                 padding-top: 120px;
@@ -825,6 +893,39 @@
                     <input type="date" id="date" class="form-control" required>
                 </div>
 
+                <!-- Campo de parcelamento (só aparece para despesas) -->
+                <div class="form-group" id="installment-group" style="display: none;">
+                    <label for="installments">Parcelas</label>
+                    <div class="installment-controls">
+                        <select id="installments" class="form-control">
+                            <option value="1">1x (à vista)</option>
+                            <option value="2">2x</option>
+                            <option value="3">3x</option>
+                            <option value="4">4x</option>
+                            <option value="5">5x</option>
+                            <option value="6">6x</option>
+                            <option value="7">7x</option>
+                            <option value="8">8x</option>
+                            <option value="9">9x</option>
+                            <option value="10">10x</option>
+                            <option value="11">11x</option>
+                            <option value="12">12x</option>
+                        </select>
+                        <div class="installment-info" id="installment-info" style="display: none;">
+                            <p><i class="fas fa-info-circle"></i> Valor por parcela: <span id="installment-value" class="installment-value">R$ 0,00</span></p>
+                            <p>Serão criadas <span id="total-installments">0</span> transações mensais.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="is-installment">
+                        <span class="checkbox-custom"></span>
+                        <span>Despesa parcelada</span>
+                    </label>
+                </div>
+
                 <button type="submit" class="btn-submit">Adicionar Transação</button>
             </form>
         </div>
@@ -855,9 +956,9 @@
     </div>
 
     <script>
-        // Dados iniciais do aplicativo
-        let transactions = JSON.parse(localStorage.getItem('financeTransactions')) || [];
-        let initialBalance = parseFloat(localStorage.getItem('initialBalance')) || 0;
+        // Dados iniciais do aplicativo - COMEÇA TOTALMENTE VAZIO
+        let transactions = [];
+        let initialBalance = 0;
         let categoryChart, comparisonChart;
         let currentFilter = 'all';
         let currentMonth = new Date().getMonth();
@@ -1206,6 +1307,73 @@
             });
         }
 
+        // Função para adicionar despesa parcelada
+        function addInstallmentTransaction(description, totalAmount, category, startDate, installments) {
+            const installmentAmount = totalAmount / installments;
+            
+            for (let i = 0; i < installments; i++) {
+                const installmentDate = new Date(startDate);
+                installmentDate.setMonth(installmentDate.getMonth() + i);
+                
+                const formattedDate = installmentDate.toISOString().split('T')[0];
+                const installmentDescription = `${description} (${i + 1}/${installments})`;
+                
+                const newTransaction = {
+                    id: Date.now() + i,
+                    description: installmentDescription,
+                    amount: parseFloat(installmentAmount.toFixed(2)),
+                    category,
+                    date: formattedDate,
+                    type: 'expense'
+                };
+                
+                transactions.push(newTransaction);
+            }
+            
+            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            
+            // Atualiza a interface
+            calculateTotals();
+            updateTransactionsList();
+            updateCharts();
+        }
+
+        // Calcula e mostra o valor da parcela
+        function updateInstallmentInfo() {
+            const amountInput = document.getElementById('amount');
+            const installmentsSelect = document.getElementById('installments');
+            const installmentInfo = document.getElementById('installment-info');
+            const installmentValue = document.getElementById('installment-value');
+            const totalInstallments = document.getElementById('total-installments');
+            
+            const amount = parseFloat(amountInput.value) || 0;
+            const installments = parseInt(installmentsSelect.value) || 1;
+            
+            if (amount > 0 && installments > 1) {
+                const installmentAmount = amount / installments;
+                installmentValue.textContent = formatCurrency(installmentAmount);
+                totalInstallments.textContent = installments;
+                installmentInfo.style.display = 'block';
+            } else {
+                installmentInfo.style.display = 'none';
+            }
+        }
+
+        // Mostra/oculta campos de parcelamento
+        function toggleInstallmentFields() {
+            const isInstallment = document.getElementById('is-installment').checked;
+            const installmentGroup = document.getElementById('installment-group');
+            const typeExpense = document.getElementById('type-expense').checked;
+            
+            if (isInstallment && typeExpense) {
+                installmentGroup.style.display = 'block';
+                updateInstallmentInfo();
+            } else {
+                installmentGroup.style.display = 'none';
+                document.getElementById('installment-info').style.display = 'none';
+            }
+        }
+
         // Abre o modal para adicionar transação
         function openTransactionModal(type = 'income') {
             const modal = document.getElementById('transaction-modal');
@@ -1258,6 +1426,10 @@
             // Limpa os outros campos
             document.getElementById('description').value = '';
             document.getElementById('amount').value = '';
+            document.getElementById('is-installment').checked = false;
+            document.getElementById('installment-group').style.display = 'none';
+            document.getElementById('installments').value = '1';
+            document.getElementById('installment-info').style.display = 'none';
             
             modal.classList.add('active');
         }
@@ -1280,8 +1452,22 @@
             initialBalance = parseFloat(balance);
             localStorage.setItem('initialBalance', initialBalance);
             
+            // Cria uma transação para o saldo inicial
+            const newTransaction = {
+                id: Date.now(),
+                description: 'Saldo Inicial',
+                amount: initialBalance,
+                category: 'Outros',
+                date: new Date().toISOString().split('T')[0],
+                type: 'income'
+            };
+            
+            transactions.push(newTransaction);
+            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            
             // Atualiza a interface
             calculateTotals();
+            updateTransactionsList();
             updateCharts();
             
             closeModals();
@@ -1289,17 +1475,24 @@
 
         // Adiciona uma nova transação
         function addTransaction(description, amount, category, date, type) {
-            const newTransaction = {
-                id: Date.now(),
-                description,
-                amount: parseFloat(amount),
-                category,
-                date,
-                type
-            };
+            const isInstallment = document.getElementById('is-installment').checked;
+            const installments = parseInt(document.getElementById('installments').value) || 1;
             
-            transactions.push(newTransaction);
-            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            if (type === 'expense' && isInstallment && installments > 1) {
+                addInstallmentTransaction(description, amount, category, date, installments);
+            } else {
+                const newTransaction = {
+                    id: Date.now(),
+                    description,
+                    amount: parseFloat(amount),
+                    category,
+                    date,
+                    type
+                };
+                
+                transactions.push(newTransaction);
+                localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            }
             
             // Atualiza a interface
             calculateTotals();
@@ -1421,6 +1614,9 @@
                             categorySelect.appendChild(option);
                         });
                     }
+                    
+                    // Atualiza visibilidade do parcelamento
+                    toggleInstallmentFields();
                 });
             });
 
@@ -1431,18 +1627,18 @@
                 });
             });
 
-            // Adiciona saldo inicial se não existir
-            if (initialBalance === 0 && transactions.length === 0) {
-                // Não adiciona transações de exemplo automaticamente
-                // O usuário deve definir o saldo inicial primeiro
-            } else if (transactions.length === 0) {
-                // Se há saldo inicial mas não há transações, cria uma transação para o saldo inicial
-                addTransaction('Saldo Inicial', initialBalance, 'Outros', new Date().toISOString().split('T')[0], 'income');
-            }
+            // Configura eventos para parcelamento
+            document.getElementById('is-installment').addEventListener('change', toggleInstallmentFields);
+            document.getElementById('amount').addEventListener('input', updateInstallmentInfo);
+            document.getElementById('installments').addEventListener('change', updateInstallmentInfo);
+
+            // APLICAÇÃO COMEÇA TOTALMENTE VAZIA
+            // Sem transações de exemplo
+            // Usuário precisa definir saldo inicial primeiro
         }
 
         // Inicializa o aplicativo quando a página carrega
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
-</html>
+    </html>
