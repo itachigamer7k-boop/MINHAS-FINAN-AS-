@@ -947,7 +947,7 @@
                 </div>
 
                 <div class="form-group">
-                    <p class="info-text">O saldo inicial será adicionado como uma transação de receita especial e servirá como base para calcular o saldo total.</p>
+                    <p class="info-text">O saldo inicial será a base para calcular o saldo total. Este valor não aparecerá como uma transação na lista.</p>
                 </div>
 
                 <button type="submit" class="btn-submit">Definir Saldo Inicial</button>
@@ -1014,7 +1014,7 @@
             }).format(value);
         }
 
-        // Calcula os totais do mês atual
+        // Calcula os totais do mês atual (VERSÃO CORRIGIDA)
         function calculateTotals() {
             let totalIncome = 0;
             let totalExpense = 0;
@@ -1037,6 +1037,7 @@
                 }
             });
 
+            // CORREÇÃO: O saldo inicial é adicionado apenas uma vez
             const balance = initialBalance + totalIncome - totalExpense - totalInvestment;
 
             // Atualiza os valores na interface
@@ -1447,23 +1448,13 @@
             document.getElementById('initial-balance-modal').classList.remove('active');
         }
 
-        // Define o saldo inicial
+        // Define o saldo inicial (VERSÃO CORRIGIDA - sem criar transação)
         function setInitialBalance(balance) {
             initialBalance = parseFloat(balance);
             localStorage.setItem('initialBalance', initialBalance);
             
-            // Cria uma transação para o saldo inicial
-            const newTransaction = {
-                id: Date.now(),
-                description: 'Saldo Inicial',
-                amount: initialBalance,
-                category: 'Outros',
-                date: new Date().toISOString().split('T')[0],
-                type: 'income'
-            };
-            
-            transactions.push(newTransaction);
-            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+            // CORREÇÃO: NÃO cria uma transação para o saldo inicial
+            // O saldo inicial é tratado separadamente das transações
             
             // Atualiza a interface
             calculateTotals();
@@ -1641,4 +1632,4 @@
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
-    </html>
+</html>
