@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanças Pessoais</title>
+    <title>Finanças Pessoais - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
             --secondary: #4cc9f0;
-            --income: #4ade80;
-            --expense: #f87171;
-            --investment: #a855f7;
             --background: #f8fafc;
             --card-bg: #ffffff;
             --text: #1e293b;
@@ -29,423 +26,89 @@
         }
 
         body {
-            background-color: var(--background);
-            color: var(--text);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             min-height: 100vh;
-            padding-bottom: 80px;
-            padding-top: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 20px 0;
-            box-shadow: var(--shadow);
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            z-index: 1000;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 400px;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
         }
 
         .logo i {
-            font-size: 2.5rem;
+            font-size: 4rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
         }
 
         .logo h1 {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
-        }
-
-        .date-navigation {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-        }
-        
-        .nav-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1.2rem;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-        
-        .nav-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .date-display {
-            font-weight: 500;
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .balance-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        .balance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 10px;
         }
-        
-        .balance-title {
-            color: var(--text-light);
+
+        .logo p {
             font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            opacity: 0.9;
         }
-        
-        .balance-actions {
-            display: flex;
-            gap: 10px;
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        
-        .toggle-balance, .set-initial-balance {
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
             background: none;
             border: none;
-            color: var(--text-light);
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-        
-        .toggle-balance:hover, .set-initial-balance:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        
-        .balance-amount.hidden {
-            filter: blur(8px);
-            user-select: none;
-            transition: filter 0.3s ease;
-        }
-        
-        .balance-amount {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-align: center;
-            transition: filter 0.3s ease;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .summary-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .income-card {
-            border-top: 5px solid var(--income);
-        }
-
-        .expense-card {
-            border-top: 5px solid var(--expense);
-        }
-
-        .investment-card {
-            border-top: 5px solid var(--investment);
-        }
-
-        .summary-card i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .income-card i {
-            color: var(--income);
-        }
-
-        .expense-card i {
-            color: var(--expense);
-        }
-
-        .investment-card i {
-            color: var(--investment);
-        }
-
-        .summary-amount {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .summary-label {
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (min-width: 992px) {
-            .charts-section {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .chart-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-title {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .chart-container {
+            transition: all 0.3s;
             position: relative;
-            height: 300px;
         }
 
-        .transactions-section {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
+        .auth-tab.active {
+            color: var(--primary);
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .transactions-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .transaction-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-        }
-
-        .income-icon {
-            background-color: rgba(74, 222, 128, 0.1);
-            color: var(--income);
-        }
-
-        .expense-icon {
-            background-color: rgba(248, 113, 113, 0.1);
-            color: var(--expense);
-        }
-
-        .investment-icon {
-            background-color: rgba(168, 85, 247, 0.1);
-            color: var(--investment);
-        }
-
-        .transaction-details h4 {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .transaction-details p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .income-amount {
-            color: var(--income);
-        }
-
-        .expense-amount {
-            color: var(--expense);
-        }
-
-        .investment-amount {
-            color: var(--investment);
-        }
-
-        .action-buttons {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .action-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            font-size: 1.8rem;
-            color: white;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease;
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .add-income {
-            background-color: var(--income);
-        }
-
-        .add-expense {
-            background-color: var(--expense);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            padding: 20px;
+            height: 2px;
+            background-color: var(--primary);
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .auth-form {
+            display: none;
         }
 
-        .modal {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-light);
+        .auth-form.active {
+            display: block;
         }
 
         .form-group {
@@ -455,1181 +118,543 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
+            color: var(--text);
             font-weight: 500;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             font-size: 1rem;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s;
+            background-color: #f8fafc;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
+            background-color: white;
         }
 
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .radio-option input {
-            display: none;
-        }
-
-        .radio-custom {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid #cbd5e1;
-            position: relative;
-        }
-
-        .radio-option input:checked + .radio-custom {
-            border-color: var(--primary);
-        }
-
-        .radio-option input:checked + .radio-custom::after {
-            content: '';
-            width: 10px;
-            height: 10px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .btn-submit {
+        .btn {
             width: 100%;
             padding: 15px;
-            background-color: var(--primary);
-            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
         }
 
-        .btn-submit:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .no-transactions {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-light);
-        }
-
-        .no-transactions i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .empty-state {
-            font-size: 1.1rem;
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            background-color: #e2e8f0;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .filter-btn.active {
+        .btn-primary {
             background-color: var(--primary);
             color: white;
         }
 
-        .filter-btn:hover {
-            background-color: #cbd5e1;
-        }
-
-        .filter-btn.active:hover {
+        .btn-primary:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.2);
         }
 
-        .info-text {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        /* Estilos para parcelamento */
-        .installment-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .checkbox-option {
+        .btn-google {
+            background-color: white;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background-color 0.2s;
+            margin-top: 20px;
         }
 
-        .checkbox-option:hover {
-            background-color: #f1f5f9;
-        }
-
-        .checkbox-option input {
-            display: none;
-        }
-
-        .checkbox-custom {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #cbd5e1;
-            border-radius: 4px;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .checkbox-option input:checked + .checkbox-custom {
-            background-color: var(--primary);
+        .btn-google:hover {
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .checkbox-option input:checked + .checkbox-custom::after {
+        .btn-google i {
+            color: #DB4437;
+            font-size: 1.2rem;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .divider::before {
             content: '';
             position: absolute;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 10px;
-            height: 10px;
-            background-color: white;
-            border-radius: 2px;
+            left: 0;
+            width: 45%;
+            height: 1px;
+            background-color: #e2e8f0;
         }
 
-        .installment-info {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f1f5f9;
-            border-radius: 8px;
-            font-size: 0.9rem;
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 45%;
+            height: 1px;
+            background-color: #e2e8f0;
         }
 
-        .installment-info p {
-            margin-bottom: 5px;
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
         }
 
-        .installment-value {
-            font-weight: bold;
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
             color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding-top: 120px;
-            }
-            
-            .balance-amount {
-                font-size: 2.5rem;
-            }
-            
-            .summary-amount {
-                font-size: 1.8rem;
-            }
-            
-            .modal {
-                padding: 20px;
-            }
-            
-            .radio-group {
-                gap: 15px;
-            }
-            
-            .action-buttons {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            .action-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 1.6rem;
-            }
-            
-            .date-display {
-                min-width: 180px;
-                font-size: 0.9rem;
-            }
-            
-            header {
-                padding: 18px 0;
-            }
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
-            body {
-                padding-top: 130px;
+            .auth-card {
+                padding: 30px 20px;
             }
             
-            .balance-amount {
+            .logo i {
+                font-size: 3rem;
+            }
+            
+            .logo h1 {
                 font-size: 2rem;
             }
             
-            .summary-amount {
-                font-size: 1.5rem;
+            .logo p {
+                font-size: 1rem;
             }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .action-buttons {
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .action-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.4rem;
-            }
-            
-            .date-navigation {
-                padding: 6px 12px;
-            }
-            
-            .date-display {
-                min-width: 150px;
-                font-size: 0.85rem;
-            }
-            
-            header {
-                padding: 15px 0;
-            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .firebase-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+        
+        .firebase-info a {
+            color: var(--primary);
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-chart-line"></i>
-                    <h1>Finanças Pessoais</h1>
-                </div>
-                <div class="date-navigation">
-                    <button class="nav-btn" id="prev-month" title="Mês anterior">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="date-display" id="current-date">
-                        <!-- A data será inserida via JavaScript -->
-                    </div>
-                    <button class="nav-btn" id="next-month" title="Próximo mês">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1>Finanças Pessoais</h1>
+            <p>Controle suas finanças de forma simples e segura</p>
         </div>
-    </header>
 
-    <main class="container">
-        <section class="balance-card">
-            <div class="balance-header">
-                <div class="balance-title">
-                    <i class="fas fa-wallet"></i>
-                    Saldo Total
-                </div>
-                <div class="balance-actions">
-                    <button class="toggle-balance" id="toggle-balance" title="Ocultar/Mostrar saldo">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="set-initial-balance" id="set-initial-balance" title="Definir saldo inicial">
-                        <i class="fas fa-plus-circle"></i>
-                    </button>
-                </div>
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Entrar</button>
+                <button class="auth-tab" data-tab="register">Cadastrar</button>
             </div>
-            <div class="balance-amount" id="balance-amount">R$ 0,00</div>
-        </section>
 
-        <section class="summary-cards">
-            <div class="summary-card income-card">
-                <i class="fas fa-money-bill-wave"></i>
-                <div class="summary-amount" id="income-total">R$ 0,00</div>
-                <div class="summary-label">Receitas</div>
-            </div>
-            <div class="summary-card expense-card">
-                <i class="fas fa-shopping-cart"></i>
-                <div class="summary-amount" id="expense-total">R$ 0,00</div>
-                <div class="summary-label">Despesas</div>
-            </div>
-            <div class="summary-card investment-card">
-                <i class="fas fa-chart-line"></i>
-                <div class="summary-amount" id="investment-total">R$ 0,00</div>
-                <div class="summary-label">Investimentos</div>
-            </div>
-        </section>
+            <div id="message" class="message"></div>
 
-        <section class="charts-section">
-            <div class="chart-card">
-                <h2 class="chart-title"><i class="fas fa-chart-pie"></i> Distribuição por Categoria</h2>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" required>
                 </div>
-            </div>
-            <div class="chart-card">
-                <h2 class="chart-title"><i class="fas fa-chart-bar"></i> Receitas vs Despesas vs Investimentos</h2>
-                <div class="chart-container">
-                    <canvas id="comparisonChart"></canvas>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Sua senha" required>
                 </div>
-            </div>
-        </section>
-
-        <section class="transactions-section">
-            <div class="section-header">
-                <h2 class="section-title">Todas as Transações</h2>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">Todas</button>
-                    <button class="filter-btn" data-filter="income">Receitas</button>
-                    <button class="filter-btn" data-filter="expense">Despesas</button>
-                    <button class="filter-btn" data-filter="investment">Investimentos</button>
-                </div>
-            </div>
-            <div class="transactions-list" id="transactions-list">
-                <!-- As transações serão inseridas via JavaScript -->
-                <div class="no-transactions">
-                    <i class="fas fa-receipt"></i>
-                    <p class="empty-state">Nenhuma transação registrada. Adicione sua primeira transação!</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="action-buttons">
-        <button class="action-btn add-income" id="add-income-btn" title="Adicionar Receita">
-            <i class="fas fa-plus"></i>
-        </button>
-        <button class="action-btn add-expense" id="add-expense-btn" title="Adicionar Despesa">
-            <i class="fas fa-minus"></i>
-        </button>
-    </div>
-
-    <!-- Modal para adicionar transação -->
-    <div class="modal-overlay" id="transaction-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">Adicionar Transação</h3>
-                <button class="close-modal" id="close-modal">
-                    <i class="fas fa-times"></i>
+                <button type="submit" class="btn btn-primary" id="login-btn">
+                    <span>Entrar</span>
                 </button>
-            </div>
-            <form id="transaction-form">
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="type" value="income" id="type-income" checked>
-                        <span class="radio-custom"></span>
-                        <span>Receita</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="type" value="expense" id="type-expense">
-                        <span class="radio-custom"></span>
-                        <span>Despesa</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="type" value="investment" id="type-investment">
-                        <span class="radio-custom"></span>
-                        <span>Investimento</span>
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Descrição</label>
-                    <input type="text" id="description" class="form-control" placeholder="Ex: Salário, Alimentação, Ações, etc." required>
-                </div>
-
-                <div class="form-group">
-                    <label for="amount">Valor (R$)</label>
-                    <input type="number" id="amount" class="form-control" min="0.01" step="0.01" placeholder="0,00" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="category">Categoria</label>
-                    <select id="category" class="form-control" required>
-                        <!-- As opções serão preenchidas via JavaScript -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">Data</label>
-                    <input type="date" id="date" class="form-control" required>
-                </div>
-
-                <!-- Campo de parcelamento (só aparece para despesas) -->
-                <div class="form-group" id="installment-group" style="display: none;">
-                    <label for="installments">Parcelas</label>
-                    <div class="installment-controls">
-                        <select id="installments" class="form-control">
-                            <option value="1">1x (à vista)</option>
-                            <option value="2">2x</option>
-                            <option value="3">3x</option>
-                            <option value="4">4x</option>
-                            <option value="5">5x</option>
-                            <option value="6">6x</option>
-                            <option value="7">7x</option>
-                            <option value="8">8x</option>
-                            <option value="9">9x</option>
-                            <option value="10">10x</option>
-                            <option value="11">11x</option>
-                            <option value="12">12x</option>
-                        </select>
-                        <div class="installment-info" id="installment-info" style="display: none;">
-                            <p><i class="fas fa-info-circle"></i> Valor por parcela: <span id="installment-value" class="installment-value">R$ 0,00</span></p>
-                            <p>Serão criadas <span id="total-installments">0</span> transações mensais.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="checkbox-option">
-                        <input type="checkbox" id="is-installment">
-                        <span class="checkbox-custom"></span>
-                        <span>Despesa parcelada</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn-submit">Adicionar Transação</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal para definir saldo inicial -->
-    <div class="modal-overlay" id="initial-balance-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Definir Saldo Inicial</h3>
-                <button class="close-modal" id="close-initial-balance-modal">
-                    <i class="fas fa-times"></i>
+                
+                <div class="divider">ou</div>
+                
+                <button type="button" class="btn btn-google" id="google-login">
+                    <i class="fab fa-google"></i>
+                    <span>Entrar com Google</span>
                 </button>
-            </div>
-            <form id="initial-balance-form">
-                <div class="form-group">
-                    <label for="initial-balance">Saldo Inicial (R$)</label>
-                    <input type="number" id="initial-balance" class="form-control" min="0" step="0.01" placeholder="0,00" required>
-                </div>
 
-                <div class="form-group">
-                    <p class="info-text">O saldo inicial será a base para calcular o saldo total. Este valor não aparecerá como uma transação na lista.</p>
+                <div class="forgot-password">
+                    <a href="#" id="forgot-password">Esqueci minha senha</a>
                 </div>
-
-                <button type="submit" class="btn-submit">Definir Saldo Inicial</button>
             </form>
+
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-name">Nome</label>
+                    <input type="text" id="register-name" class="form-control" placeholder="Seu nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">E-mail</label>
+                    <input type="email" id="register-email" class="form-control" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Senha</label>
+                    <input type="password" id="register-password" class="form-control" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirmar Senha</label>
+                    <input type="password" id="register-confirm-password" class="form-control" placeholder="Digite a senha novamente" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="register-btn">
+                    <span>Criar Conta</span>
+                </button>
+                
+                <div class="divider">ou</div>
+                
+                <button type="button" class="btn btn-google" id="google-register">
+                    <i class="fab fa-google"></i>
+                    <span>Cadastrar com Google</span>
+                </button>
+            </form>
+
+            <form id="reset-form" class="auth-form">
+                <div class="form-group">
+                    <label for="reset-email">E-mail</label>
+                    <input type="email" id="reset-email" class="form-control" placeholder="seu@email.com" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="reset-btn">
+                    <span>Enviar Link de Recuperação</span>
+                </button>
+                <div class="forgot-password">
+                    <a href="#" id="back-to-login">Voltar para o login</a>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner"></i>
+            </div>
+            
+            <div class="firebase-info">
+                <p>Seus dados são armazenados com segurança no <a href="https://firebase.google.com" target="_blank">Firebase</a></p>
+            </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    
     <script>
-        // Dados iniciais do aplicativo - COMEÇA TOTALMENTE VAZIO
-        let transactions = [];
-        let initialBalance = 0;
-        let categoryChart, comparisonChart;
-        let currentFilter = 'all';
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-
-        // Categorias disponíveis
-        const categories = {
-            income: ['Salário', 'Freelance', 'Investimentos', 'Presente', 'Outros'],
-            expense: ['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Compras', 'Outros'],
-            investment: ['Ações', 'Fundos Imobiliários', 'Tesouro Direto', 'CDB', 'Criptomoedas', 'Previdência', 'Outros']
+        // 🔥 SUBSTITUA COM SUAS CREDENCIAIS DO FIREBASE 🔥
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto-id",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abc123def456ghi789jkl"
         };
 
-        // Atualiza a data atual no cabeçalho
-        function updateCurrentDate() {
-            const monthNames = [
-                "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-            ];
-            
-            const monthName = monthNames[currentMonth];
-            document.getElementById('current-date').textContent = `${monthName} de ${currentYear}`;
-        }
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-        // Navega para o mês anterior
-        function goToPreviousMonth() {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            updateCurrentDate();
-            updateTransactionsList();
-            updateCharts();
-        }
+        // Elementos DOM
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const resetForm = document.getElementById('reset-form');
+        const messageDiv = document.getElementById('message');
+        const loadingDiv = document.getElementById('loading');
 
-        // Navega para o próximo mês
-        function goToNextMonth() {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            updateCurrentDate();
-            updateTransactionsList();
-            updateCharts();
-        }
-
-        // Formata valor monetário
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
-
-        // Calcula os totais do mês atual (VERSÃO CORRIGIDA)
-        function calculateTotals() {
-            let totalIncome = 0;
-            let totalExpense = 0;
-            let totalInvestment = 0;
-
-            transactions.forEach(transaction => {
-                const transactionDate = new Date(transaction.date);
-                const transactionMonth = transactionDate.getMonth();
-                const transactionYear = transactionDate.getFullYear();
+        // Alternar entre abas
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
                 
-                // Filtra transações do mês atual
-                if (transactionMonth === currentMonth && transactionYear === currentYear) {
-                    if (transaction.type === 'income') {
-                        totalIncome += transaction.amount;
-                    } else if (transaction.type === 'expense') {
-                        totalExpense += transaction.amount;
-                    } else if (transaction.type === 'investment') {
-                        totalInvestment += transaction.amount;
-                    }
-                }
-            });
-
-            // CORREÇÃO: O saldo inicial é adicionado apenas uma vez
-            const balance = initialBalance + totalIncome - totalExpense - totalInvestment;
-
-            // Atualiza os valores na interface
-            document.getElementById('balance-amount').textContent = formatCurrency(balance);
-            document.getElementById('income-total').textContent = formatCurrency(totalIncome);
-            document.getElementById('expense-total').textContent = formatCurrency(totalExpense);
-            document.getElementById('investment-total').textContent = formatCurrency(totalInvestment);
-
-            return { totalIncome, totalExpense, totalInvestment, balance };
-        }
-
-        // Alterna a visibilidade do saldo
-        function toggleBalanceVisibility() {
-            const balanceAmount = document.getElementById('balance-amount');
-            const toggleButton = document.getElementById('toggle-balance');
-            const eyeIcon = toggleButton.querySelector('i');
-            
-            balanceAmount.classList.toggle('hidden');
-            
-            if (balanceAmount.classList.contains('hidden')) {
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-                toggleButton.title = "Mostrar saldo";
-            } else {
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-                toggleButton.title = "Ocultar saldo";
-            }
-        }
-
-        // Atualiza a lista de transações com filtro (somente do mês atual)
-        function updateTransactionsList() {
-            const transactionsList = document.getElementById('transactions-list');
-            
-            // Filtra transações do mês atual
-            const monthlyTransactions = transactions.filter(transaction => {
-                const transactionDate = new Date(transaction.date);
-                return transactionDate.getMonth() === currentMonth && 
-                       transactionDate.getFullYear() === currentYear;
-            });
-            
-            // Ordena transações por data (mais recentes primeiro)
-            const sortedTransactions = [...monthlyTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // Filtra as transações pelo filtro selecionado
-            let filteredTransactions = sortedTransactions;
-            if (currentFilter !== 'all') {
-                filteredTransactions = sortedTransactions.filter(t => t.type === currentFilter);
-            }
-            
-            if (filteredTransactions.length === 0) {
-                let message = 'Nenhuma transação registrada para este mês.';
-                if (currentFilter !== 'all') {
-                    const typeNames = {
-                        'income': 'receita',
-                        'expense': 'despesa',
-                        'investment': 'investimento'
-                    };
-                    message = `Nenhuma transação de ${typeNames[currentFilter]} encontrada para este mês.`;
-                }
+                // Atualizar abas ativas
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
                 
-                transactionsList.innerHTML = `
-                    <div class="no-transactions">
-                        <i class="fas fa-receipt"></i>
-                        <p class="empty-state">${message}</p>
-                    </div>
-                `;
+                // Mostrar formulário correspondente
+                document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+                document.getElementById(`${tabId}-form`).classList.add('active');
+                
+                // Limpar mensagens
+                showMessage('', '');
+            });
+        });
+
+        // Link "Esqueci minha senha"
+        document.getElementById('forgot-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+            resetForm.classList.add('active');
+            showMessage('', '');
+        });
+
+        // Link "Voltar para o login"
+        document.getElementById('back-to-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+            loginForm.classList.add('active');
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="login"]').classList.add('active');
+            showMessage('', '');
+        });
+
+        // Função para mostrar mensagens
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = text ? 'block' : 'none';
+        }
+
+        // Função para mostrar/ocultar loading
+        function showLoading(show) {
+            loadingDiv.style.display = show ? 'block' : 'none';
+        }
+
+        // Login com email/senha
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const loginBtn = document.getElementById('login-btn');
+            
+            try {
+                showLoading(true);
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+                
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('Login realizado com sucesso!', 'success');
+                
+                // Redirecionar para o app após 1 segundo
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 1000);
+                
+            } catch (error) {
+                let errorMessage = 'Erro ao fazer login. ';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'Usuário não encontrado.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage += 'Senha incorreta.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'E-mail inválido.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                showMessage(errorMessage, 'error');
+            } finally {
+                showLoading(false);
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span>Entrar</span>';
+            }
+        });
+
+        // Cadastro com email/senha
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const registerBtn = document.getElementById('register-btn');
+            
+            // Validações
+            if (password !== confirmPassword) {
+                showMessage('As senhas não coincidem!', 'error');
                 return;
             }
-
-            let transactionsHTML = '';
-            filteredTransactions.forEach(transaction => {
-                const date = new Date(transaction.date);
-                const formattedDate = date.toLocaleDateString('pt-BR');
-                
-                // Define o ícone baseado no tipo
-                let iconClass = 'arrow-down';
-                if (transaction.type === 'expense') iconClass = 'arrow-up';
-                if (transaction.type === 'investment') iconClass = 'chart-line';
-                
-                transactionsHTML += `
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-icon ${transaction.type}-icon">
-                                <i class="fas fa-${iconClass}"></i>
-                            </div>
-                            <div class="transaction-details">
-                                <h4>${transaction.description}</h4>
-                                <p>${formattedDate} • ${transaction.category}</p>
-                            </div>
-                        </div>
-                        <div class="transaction-amount ${transaction.type}-amount">
-                            ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}
-                        </div>
-                    </div>
-                `;
-            });
-
-            transactionsList.innerHTML = transactionsHTML;
-        }
-
-        // Atualiza os gráficos com dados do mês atual
-        function updateCharts() {
-            const { totalIncome, totalExpense, totalInvestment } = calculateTotals();
             
-            // Dados para o gráfico de distribuição por categoria (do mês atual)
-            const categoryData = {
-                income: {},
-                expense: {},
-                investment: {}
-            };
-
-            // Inicializa as categorias
-            categories.income.forEach(category => categoryData.income[category] = 0);
-            categories.expense.forEach(category => categoryData.expense[category] = 0);
-            categories.investment.forEach(category => categoryData.investment[category] = 0);
-
-            // Contabiliza as transações do mês atual
-            transactions.forEach(transaction => {
-                const transactionDate = new Date(transaction.date);
-                if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
-                    if (transaction.type === 'income') {
-                        categoryData.income[transaction.category] += transaction.amount;
-                    } else if (transaction.type === 'expense') {
-                        categoryData.expense[transaction.category] += transaction.amount;
-                    } else if (transaction.type === 'investment') {
-                        categoryData.investment[transaction.category] += transaction.amount;
-                    }
-                }
-            });
-
-            // Prepara dados para o gráfico de pizza
-            const allCategories = [];
-            const allValues = [];
-            const allColors = [];
-
-            // Adiciona receitas
-            categories.income.forEach(category => {
-                if (categoryData.income[category] > 0) {
-                    allCategories.push(`Receita: ${category}`);
-                    allValues.push(categoryData.income[category]);
-                    allColors.push('#4ade80');
-                }
-            });
-
-            // Adiciona despesas
-            categories.expense.forEach(category => {
-                if (categoryData.expense[category] > 0) {
-                    allCategories.push(`Despesa: ${category}`);
-                    allValues.push(categoryData.expense[category]);
-                    allColors.push('#f87171');
-                }
-            });
-
-            // Adiciona investimentos
-            categories.investment.forEach(category => {
-                if (categoryData.investment[category] > 0) {
-                    allCategories.push(`Investimento: ${category}`);
-                    allValues.push(categoryData.investment[category]);
-                    allColors.push('#a855f7');
-                }
-            });
-
-            // Gráfico de distribuição por categoria
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            
-            if (categoryChart) {
-                categoryChart.destroy();
+            if (password.length < 6) {
+                showMessage('A senha deve ter pelo menos 6 caracteres!', 'error');
+                return;
             }
-
-            if (allValues.length > 0) {
-                categoryChart = new Chart(categoryCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: allCategories,
-                        datasets: [{
-                            data: allValues,
-                            backgroundColor: allColors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 11
-                                    }
-                                }
-                            }
-                        }
-                    }
+            
+            try {
+                showLoading(true);
+                registerBtn.disabled = true;
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+                
+                // Criar usuário no Firebase
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Atualizar nome do usuário
+                await userCredential.user.updateProfile({
+                    displayName: name
                 });
-            } else {
-                // Se não houver dados, mostra um gráfico vazio
-                categoryChart = new Chart(categoryCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Sem dados'],
-                        datasets: [{
-                            data: [1],
-                            backgroundColor: ['#e2e8f0'],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de comparação
-            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
-            
-            if (comparisonChart) {
-                comparisonChart.destroy();
-            }
-
-            comparisonChart = new Chart(comparisonCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Receitas', 'Despesas', 'Investimentos'],
-                    datasets: [{
-                        label: 'Valor (R$)',
-                        data: [totalIncome, totalExpense, totalInvestment],
-                        backgroundColor: [
-                            'rgba(74, 222, 128, 0.7)',
-                            'rgba(248, 113, 113, 0.7)',
-                            'rgba(168, 85, 247, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgb(74, 222, 128)',
-                            'rgb(248, 113, 113)',
-                            'rgb(168, 85, 247)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR');
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        // Função para adicionar despesa parcelada
-        function addInstallmentTransaction(description, totalAmount, category, startDate, installments) {
-            const installmentAmount = totalAmount / installments;
-            
-            for (let i = 0; i < installments; i++) {
-                const installmentDate = new Date(startDate);
-                installmentDate.setMonth(installmentDate.getMonth() + i);
                 
-                const formattedDate = installmentDate.toISOString().split('T')[0];
-                const installmentDescription = `${description} (${i + 1}/${installments})`;
+                showMessage('Conta criada com sucesso! Faça login para continuar.', 'success');
                 
-                const newTransaction = {
-                    id: Date.now() + i,
-                    description: installmentDescription,
-                    amount: parseFloat(installmentAmount.toFixed(2)),
-                    category,
-                    date: formattedDate,
-                    type: 'expense'
-                };
-                
-                transactions.push(newTransaction);
-            }
-            
-            localStorage.setItem('financeTransactions', JSON.stringify(transactions));
-            
-            // Atualiza a interface
-            calculateTotals();
-            updateTransactionsList();
-            updateCharts();
-        }
-
-        // Calcula e mostra o valor da parcela
-        function updateInstallmentInfo() {
-            const amountInput = document.getElementById('amount');
-            const installmentsSelect = document.getElementById('installments');
-            const installmentInfo = document.getElementById('installment-info');
-            const installmentValue = document.getElementById('installment-value');
-            const totalInstallments = document.getElementById('total-installments');
-            
-            const amount = parseFloat(amountInput.value) || 0;
-            const installments = parseInt(installmentsSelect.value) || 1;
-            
-            if (amount > 0 && installments > 1) {
-                const installmentAmount = amount / installments;
-                installmentValue.textContent = formatCurrency(installmentAmount);
-                totalInstallments.textContent = installments;
-                installmentInfo.style.display = 'block';
-            } else {
-                installmentInfo.style.display = 'none';
-            }
-        }
-
-        // Mostra/oculta campos de parcelamento
-        function toggleInstallmentFields() {
-            const isInstallment = document.getElementById('is-installment').checked;
-            const installmentGroup = document.getElementById('installment-group');
-            const typeExpense = document.getElementById('type-expense').checked;
-            
-            if (isInstallment && typeExpense) {
-                installmentGroup.style.display = 'block';
-                updateInstallmentInfo();
-            } else {
-                installmentGroup.style.display = 'none';
-                document.getElementById('installment-info').style.display = 'none';
-            }
-        }
-
-        // Abre o modal para adicionar transação
-        function openTransactionModal(type = 'income') {
-            const modal = document.getElementById('transaction-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const categorySelect = document.getElementById('category');
-            
-            // Define o tipo de transação
-            if (type === 'income') {
-                modalTitle.textContent = 'Adicionar Receita';
-                document.getElementById('type-income').checked = true;
-                
-                // Preenche as categorias de receita
-                categorySelect.innerHTML = '';
-                categories.income.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    categorySelect.appendChild(option);
-                });
-            } else if (type === 'expense') {
-                modalTitle.textContent = 'Adicionar Despesa';
-                document.getElementById('type-expense').checked = true;
-                
-                // Preenche as categorias de despesa
-                categorySelect.innerHTML = '';
-                categories.expense.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    categorySelect.appendChild(option);
-                });
-            } else {
-                modalTitle.textContent = 'Adicionar Investimento';
-                document.getElementById('type-investment').checked = true;
-                
-                // Preenche as categorias de investimento
-                categorySelect.innerHTML = '';
-                categories.investment.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    categorySelect.appendChild(option);
-                });
-            }
-            
-            // Define a data atual como padrão
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
-            
-            // Limpa os outros campos
-            document.getElementById('description').value = '';
-            document.getElementById('amount').value = '';
-            document.getElementById('is-installment').checked = false;
-            document.getElementById('installment-group').style.display = 'none';
-            document.getElementById('installments').value = '1';
-            document.getElementById('installment-info').style.display = 'none';
-            
-            modal.classList.add('active');
-        }
-
-        // Abre o modal para definir saldo inicial
-        function openInitialBalanceModal() {
-            const modal = document.getElementById('initial-balance-modal');
-            document.getElementById('initial-balance').value = initialBalance || '';
-            modal.classList.add('active');
-        }
-
-        // Fecha os modais
-        function closeModals() {
-            document.getElementById('transaction-modal').classList.remove('active');
-            document.getElementById('initial-balance-modal').classList.remove('active');
-        }
-
-        // Define o saldo inicial (VERSÃO CORRIGIDA - sem criar transação)
-        function setInitialBalance(balance) {
-            initialBalance = parseFloat(balance);
-            localStorage.setItem('initialBalance', initialBalance);
-            
-            // CORREÇÃO: NÃO cria uma transação para o saldo inicial
-            // O saldo inicial é tratado separadamente das transações
-            
-            // Atualiza a interface
-            calculateTotals();
-            updateTransactionsList();
-            updateCharts();
-            
-            closeModals();
-        }
-
-        // Adiciona uma nova transação
-        function addTransaction(description, amount, category, date, type) {
-            const isInstallment = document.getElementById('is-installment').checked;
-            const installments = parseInt(document.getElementById('installments').value) || 1;
-            
-            if (type === 'expense' && isInstallment && installments > 1) {
-                addInstallmentTransaction(description, amount, category, date, installments);
-            } else {
-                const newTransaction = {
-                    id: Date.now(),
-                    description,
-                    amount: parseFloat(amount),
-                    category,
-                    date,
-                    type
-                };
-                
-                transactions.push(newTransaction);
-                localStorage.setItem('financeTransactions', JSON.stringify(transactions));
-            }
-            
-            // Atualiza a interface
-            calculateTotals();
-            updateTransactionsList();
-            updateCharts();
-            
-            // Fecha o modal
-            closeModals();
-        }
-
-        // Aplica filtro às transações
-        function applyFilter(filter) {
-            currentFilter = filter;
-            
-            // Atualiza os botões de filtro
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.filter === filter) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            updateTransactionsList();
-        }
-
-        // Inicializa o aplicativo
-        function initApp() {
-            updateCurrentDate();
-            calculateTotals();
-            updateTransactionsList();
-            updateCharts();
-
-            // Configura os botões de navegação do mês
-            document.getElementById('prev-month').addEventListener('click', goToPreviousMonth);
-            document.getElementById('next-month').addEventListener('click', goToNextMonth);
-            
-            // Configura os botões de ação
-            document.getElementById('add-income-btn').addEventListener('click', () => openTransactionModal('income'));
-            document.getElementById('add-expense-btn').addEventListener('click', () => openTransactionModal('expense'));
-            
-            // Configura o botão de definir saldo inicial
-            document.getElementById('set-initial-balance').addEventListener('click', openInitialBalanceModal);
-            
-            // Configura o botão de ocultar/mostrar saldo
-            document.getElementById('toggle-balance').addEventListener('click', toggleBalanceVisibility);
-            
-            // Configura os botões de fechar modal
-            document.getElementById('close-modal').addEventListener('click', closeModals);
-            document.getElementById('close-initial-balance-modal').addEventListener('click', closeModals);
-            
-            // Fecha modais ao clicar fora
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeModals();
-                    }
-                });
-            });
-
-            // Configura o formulário de transação
-            document.getElementById('transaction-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const description = document.getElementById('description').value;
-                const amount = document.getElementById('amount').value;
-                const category = document.getElementById('category').value;
-                const date = document.getElementById('date').value;
-                const type = document.querySelector('input[name="type"]:checked').value;
-                
-                if (description && amount && category && date) {
-                    addTransaction(description, amount, category, date, type);
-                }
-            });
-
-            // Configura o formulário de saldo inicial
-            document.getElementById('initial-balance-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const balance = document.getElementById('initial-balance').value;
-                
-                if (balance) {
-                    setInitialBalance(balance);
-                }
-            });
-
-            // Atualiza as categorias quando o tipo de transação é alterado
-            document.querySelectorAll('input[name="type"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    const type = e.target.value;
-                    const categorySelect = document.getElementById('category');
-                    const modalTitle = document.getElementById('modal-title');
+                // Voltar para a aba de login após 2 segundos
+                setTimeout(() => {
+                    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('[data-tab="login"]').classList.add('active');
+                    document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+                    loginForm.classList.add('active');
                     
-                    if (type === 'income') {
-                        modalTitle.textContent = 'Adicionar Receita';
-                        categorySelect.innerHTML = '';
-                        categories.income.forEach(category => {
-                            const option = document.createElement('option');
-                            option.value = category;
-                            option.textContent = category;
-                            categorySelect.appendChild(option);
-                        });
-                    } else if (type === 'expense') {
-                        modalTitle.textContent = 'Adicionar Despesa';
-                        categorySelect.innerHTML = '';
-                        categories.expense.forEach(category => {
-                            const option = document.createElement('option');
-                            option.value = category;
-                            option.textContent = category;
-                            categorySelect.appendChild(option);
-                        });
-                    } else {
-                        modalTitle.textContent = 'Adicionar Investimento';
-                        categorySelect.innerHTML = '';
-                        categories.investment.forEach(category => {
-                            const option = document.createElement('option');
-                            option.value = category;
-                            option.textContent = category;
-                            categorySelect.appendChild(option);
-                        });
-                    }
-                    
-                    // Atualiza visibilidade do parcelamento
-                    toggleInstallmentFields();
-                });
-            });
+                    // Limpar formulário
+                    registerForm.reset();
+                    showMessage('', '');
+                }, 2000);
+                
+            } catch (error) {
+                let errorMessage = 'Erro ao criar conta. ';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'Este e-mail já está em uso.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'E-mail inválido.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                showMessage(errorMessage, 'error');
+            } finally {
+                showLoading(false);
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<span>Criar Conta</span>';
+            }
+        });
 
-            // Configura os botões de filtro
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    applyFilter(btn.dataset.filter);
-                });
-            });
-
-            // Configura eventos para parcelamento
-            document.getElementById('is-installment').addEventListener('change', toggleInstallmentFields);
-            document.getElementById('amount').addEventListener('input', updateInstallmentInfo);
-            document.getElementById('installments').addEventListener('change', updateInstallmentInfo);
-
-            // APLICAÇÃO COMEÇA TOTALMENTE VAZIA
-            // Sem transações de exemplo
-            // Usuário precisa definir saldo inicial primeiro
+        // Login com Google
+        async function signInWithGoogle() {
+            try {
+                showLoading(true);
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                
+                showMessage('Login realizado com sucesso!', 'success');
+                
+                // Redirecionar para o app após 1 segundo
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 1000);
+                
+            } catch (error) {
+                showMessage('Erro ao fazer login com Google: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
         }
 
-        // Inicializa o aplicativo quando a página carrega
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Recuperação de senha
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('reset-email').value;
+            const resetBtn = document.getElementById('reset-btn');
+            
+            try {
+                showLoading(true);
+                resetBtn.disabled = true;
+                resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                
+                await auth.sendPasswordResetEmail(email);
+                
+                showMessage('E-mail de recuperação enviado! Verifique sua caixa de entrada.', 'success');
+                
+                // Voltar para o login após 3 segundos
+                setTimeout(() => {
+                    document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+                    loginForm.classList.add('active');
+                    resetForm.reset();
+                    showMessage('', '');
+                }, 3000);
+                
+            } catch (error) {
+                let errorMessage = 'Erro ao enviar e-mail de recuperação. ';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'Usuário não encontrado.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'E-mail inválido.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                showMessage(errorMessage, 'error');
+            } finally {
+                showLoading(false);
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<span>Enviar Link de Recuperação</span>';
+            }
+        });
+
+        // Botões do Google
+        document.getElementById('google-login').addEventListener('click', signInWithGoogle);
+        document.getElementById('google-register').addEventListener('click', signInWithGoogle);
+
+        // Verificar se usuário já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user && window.location.pathname.endsWith('index.html')) {
+                // Se já estiver logado e estiver na página de login, redirecionar para o app
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 500);
+            }
+        });
     </script>
 </body>
 </html>
